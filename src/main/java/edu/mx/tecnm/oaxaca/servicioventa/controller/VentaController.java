@@ -28,6 +28,7 @@ public class VentaController {
         CustomResponse customResponse = new CustomResponse();
         ventaService.registarVenta(venta);
         customResponse.setHttpCode(HttpStatus.CREATED);
+        customResponse.setMensaje("Success");
         return customResponse;
     }
     
@@ -64,6 +65,7 @@ public class VentaController {
         CustomResponse customResponse = new CustomResponse();
         ventaService.updateVenta(venta, idVenta);
         customResponse.setHttpCode(HttpStatus.OK);
+        customResponse.setMensaje("Update Success");
         return customResponse;
     }
 
@@ -72,6 +74,7 @@ public class VentaController {
         CustomResponse customResponse = new CustomResponse();
         ventaService.deleteVenta(idVenta);
         customResponse.setHttpCode(HttpStatus.NO_CONTENT);
+        customResponse.setMensaje("Delete success");
         return customResponse;
     }
 }
