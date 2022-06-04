@@ -14,6 +14,7 @@ import edu.mx.tecnm.oaxaca.servicioventa.utils.CustomResponse;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -30,7 +31,7 @@ public class VentaDetalleController {
 
     @Autowired
     private VentaDetalleService ventaDetalleService;
-    
+
     @Autowired
     private VentaDetalleRepository ventaDetalleRepository;
 
@@ -39,23 +40,34 @@ public class VentaDetalleController {
             @RequestBody VentaDetalleModel ventaDetalle) {
         CustomResponse customResponse = new CustomResponse();
         VentaModel ventaModel = ventaService.getVenta(idVenta);
-        if (ventaModel != null){
+        if (ventaModel != null) {
             ventaDetalle.setVenta(ventaModel);
             ventaDetalleService.registarVentaDetalle(ventaDetalle);
+            customResponse.setHttpCode(HttpStatus.CREATED);
+            customResponse.setMensaje("Successful");
+        } else {
+            customResponse.setMensaje("Your request cannot be processed");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        customResponse.setHttpCode(HttpStatus.CREATED);
         return customResponse;
     }
-    
+
     @GetMapping("/venta/{idVenta}/ventadetalle")
     public CustomResponse getVentaDetalle(@PathVariable int idVenta) {
         CustomResponse customResponse = new CustomResponse();
         List<VentaDetalleModel> detalles = ventaDetalleRepository.findByVentaId(idVenta);
-        customResponse.setData(detalles);
-        customResponse.setHttpCode(HttpStatus.OK);
+        if (detalles.isEmpty()) {
+            customResponse.setHttpCode(HttpStatus.NO_CONTENT);
+            customResponse.setMensaje("Not found Detalles in this table");
+        } else {
+            customResponse.setData(detalles);
+            customResponse.setHttpCode(HttpStatus.OK);
+            customResponse.setMensaje("Showing all records");
+        }
+
         return customResponse;
     }
-    
+
     @GetMapping("/ventadetalle")
     public CustomResponse getDetalle() {
         CustomResponse customResponse = new CustomResponse();
@@ -63,7 +75,7 @@ public class VentaDetalleController {
         customResponse.setHttpCode(HttpStatus.OK);
         return customResponse;
     }
-    
+
     @GetMapping("/ventadetalle/{idDetalle}")
     public CustomResponse getDetalle(@PathVariable int idDetalle) {
         CustomResponse customResponse = new CustomResponse();
@@ -71,7 +83,7 @@ public class VentaDetalleController {
         customResponse.setHttpCode(HttpStatus.OK);
         return customResponse;
     }
-    
+
     @DeleteMapping("/ventadetalle/{idDetalle}")
     public CustomResponse deleteDetalle(@PathVariable int idDetalle) {
         CustomResponse customResponse = new CustomResponse();
@@ -79,7 +91,7 @@ public class VentaDetalleController {
         customResponse.setHttpCode(HttpStatus.NO_CONTENT);
         return customResponse;
     }
-    
+
     @PutMapping("/ventadetalle/{idDetalle}")
     public CustomResponse updateDetalle(@RequestBody VentaDetalleModel ventaDetalle, @PathVariable int idDetalle) {
         CustomResponse customResponse = new CustomResponse();

@@ -34,16 +34,28 @@ public class VentaController {
     @GetMapping("/venta")
     public CustomResponse getVentas() {
         CustomResponse customResponse = new CustomResponse();
-        customResponse.setData(ventaService.getVentas());
-        customResponse.setHttpCode(HttpStatus.OK);
+        if (ventaService.getVentas().isEmpty()){
+            customResponse.setHttpCode(HttpStatus.NO_CONTENT);
+            customResponse.setMensaje("Not found Ventas in this table");
+        }else{
+            customResponse.setData(ventaService.getVentas());
+            customResponse.setHttpCode(HttpStatus.OK);
+            customResponse.setMensaje("Showing all records");
+        }
         return customResponse;
     }
     
     @GetMapping("/venta/{idVenta}")
     public CustomResponse getVenta(@PathVariable int idVenta) {
         CustomResponse customResponse = new CustomResponse();
-        customResponse.setData(ventaService.getVenta(idVenta));
-        customResponse.setHttpCode(HttpStatus.OK);
+        if (ventaService.getVenta(idVenta) == null){
+            customResponse.setHttpCode(HttpStatus.NOT_FOUND);
+            customResponse.setMensaje("Not found Ventas with id = "+idVenta);
+        }else{
+            customResponse.setData(ventaService.getVenta(idVenta));
+            customResponse.setHttpCode(HttpStatus.OK);
+            customResponse.setMensaje("Showing all matches");
+        }
         return customResponse;
     }
 
