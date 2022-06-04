@@ -57,8 +57,9 @@ public class VentaDetalleController {
         CustomResponse customResponse = new CustomResponse();
         List<VentaDetalleModel> detalles = ventaDetalleRepository.findByVentaId(idVenta);
         if (detalles.isEmpty()) {
+            customResponse.setData(detalles);
             customResponse.setHttpCode(HttpStatus.NO_CONTENT);
-            customResponse.setMensaje("Not found Detalles in this table");
+            customResponse.setMensaje("Not found Detalles in this table with idVenta "+idVenta);
         } else {
             customResponse.setData(detalles);
             customResponse.setHttpCode(HttpStatus.OK);
@@ -71,16 +72,31 @@ public class VentaDetalleController {
     @GetMapping("/ventadetalle")
     public CustomResponse getDetalle() {
         CustomResponse customResponse = new CustomResponse();
-        customResponse.setData(ventaDetalleService.getVentasDetalle());
-        customResponse.setHttpCode(HttpStatus.OK);
+        if (ventaDetalleService.getVentasDetalle().isEmpty()){
+            customResponse.setData(ventaDetalleService.getVentasDetalle());
+            customResponse.setHttpCode(HttpStatus.NOT_FOUND);
+            customResponse.setMensaje("Not found Detalles in this table");
+        }else{
+            customResponse.setData(ventaDetalleService.getVentasDetalle());
+            customResponse.setHttpCode(HttpStatus.OK);
+            customResponse.setMensaje("Showing all records");
+        }
+        
         return customResponse;
     }
 
     @GetMapping("/ventadetalle/{idDetalle}")
     public CustomResponse getDetalle(@PathVariable int idDetalle) {
         CustomResponse customResponse = new CustomResponse();
-        customResponse.setData(ventaDetalleService.getVentaDetalle(idDetalle));
-        customResponse.setHttpCode(HttpStatus.OK);
+        if (ventaDetalleService.getVentaDetalle(idDetalle) == null) {
+            customResponse.setData(ventaDetalleService.getVentaDetalle(idDetalle));
+            customResponse.setHttpCode(HttpStatus.NOT_FOUND);
+            customResponse.setMensaje("No matches");
+        } else {
+            customResponse.setData(ventaDetalleService.getVentaDetalle(idDetalle));
+            customResponse.setHttpCode(HttpStatus.OK);
+            customResponse.setMensaje("Showing data");
+        }
         return customResponse;
     }
 
