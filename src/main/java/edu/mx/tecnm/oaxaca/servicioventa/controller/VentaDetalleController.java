@@ -46,7 +46,7 @@ public class VentaDetalleController {
             customResponse.setHttpCode(HttpStatus.CREATED);
             customResponse.setMensaje("Successful");
         } else {
-            customResponse.setMensaje("There isn't a sale with the id "+idVenta);
+            customResponse.setMensaje("There isn't a sale with the id " + idVenta);
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         return customResponse;
@@ -59,7 +59,7 @@ public class VentaDetalleController {
         if (detalles.isEmpty()) {
             customResponse.setData(detalles);
             customResponse.setHttpCode(HttpStatus.NO_CONTENT);
-            customResponse.setMensaje("Not found Detalles in this table with idVenta "+idVenta);
+            customResponse.setMensaje("Not found Detalles in this table with idVenta " + idVenta);
         } else {
             customResponse.setData(detalles);
             customResponse.setHttpCode(HttpStatus.OK);
@@ -72,16 +72,16 @@ public class VentaDetalleController {
     @GetMapping("/ventadetalle")
     public CustomResponse getDetalle() {
         CustomResponse customResponse = new CustomResponse();
-        if (ventaDetalleService.getVentasDetalle().isEmpty()){
+        if (ventaDetalleService.getVentasDetalle().isEmpty()) {
             customResponse.setData(ventaDetalleService.getVentasDetalle());
             customResponse.setHttpCode(HttpStatus.NOT_FOUND);
             customResponse.setMensaje("Not found Detalles in this table");
-        }else{
+        } else {
             customResponse.setData(ventaDetalleService.getVentasDetalle());
             customResponse.setHttpCode(HttpStatus.OK);
             customResponse.setMensaje("Showing all records");
         }
-        
+
         return customResponse;
     }
 
@@ -103,8 +103,15 @@ public class VentaDetalleController {
     @DeleteMapping("/ventadetalle/{idDetalle}")
     public CustomResponse deleteDetalle(@PathVariable int idDetalle) {
         CustomResponse customResponse = new CustomResponse();
-        ventaDetalleService.deleteVentaDetalle(idDetalle);
-        customResponse.setHttpCode(HttpStatus.NO_CONTENT);
+        if (ventaDetalleService.getVentaDetalle(idDetalle) == null) {
+            customResponse.setHttpCode(HttpStatus.NOT_FOUND);
+            customResponse.setMensaje("Not found Detalles in this table with idDetalle " + idDetalle);
+        } else {
+            ventaDetalleService.deleteVentaDetalle(idDetalle);
+            customResponse.setHttpCode(HttpStatus.ACCEPTED);
+            customResponse.setMensaje("Delete uccess");
+
+        }
         return customResponse;
     }
 
