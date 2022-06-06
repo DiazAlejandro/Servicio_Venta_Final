@@ -19,4 +19,5 @@ public interface VentaService {
     public VentaModel getVenta(int idVenta);
     public void updateVenta(VentaModel ventaModel, Integer idVenta);
     public void deleteVenta(Integer idVenta);
+    public VentaModel getVentaByFolio(String folio);
 }

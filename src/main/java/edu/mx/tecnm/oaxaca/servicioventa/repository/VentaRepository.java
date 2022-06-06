@@ -14,5 +14,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface VentaRepository extends JpaRepository<VentaModel, Integer>{
-    public VentaModel findById(int idVenta);   
+    public VentaModel findById(int idVenta);
+    
+    public VentaModel findByFolio(String folio);
+    
 }

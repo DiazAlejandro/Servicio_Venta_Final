@@ -120,6 +120,7 @@ public class VentaDetalleController {
         CustomResponse customResponse = new CustomResponse();
         ventaDetalleService.updateVentaDetalle(ventaDetalle, idDetalle);
         customResponse.setHttpCode(HttpStatus.OK);
+        customResponse.setMensaje("Update Success");
         return customResponse;
     }
 }

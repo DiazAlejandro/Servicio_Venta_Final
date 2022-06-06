@@ -46,5 +46,10 @@ public class VentaImplements implements VentaService {
     public void deleteVenta(Integer idVenta) {
         ventaRepository.deleteById(idVenta);
     }
+
+    @Override
+    public VentaModel getVentaByFolio(String folio) {
+        return ventaRepository.findByFolio(folio);
+    }
     
 }
