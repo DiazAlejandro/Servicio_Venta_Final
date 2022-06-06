@@ -63,8 +63,15 @@ public class VentaController {
     @GetMapping("/venta/folio/{folio}")
     public CustomResponse getVentaFolio (@PathVariable String folio) {
         CustomResponse customResponse = new CustomResponse();
-        
-        customResponse.setData(ventaService.getVentaByFolio(folio));
+        if (ventaService.getVentaByFolio(folio) == null){
+            customResponse.setHttpCode(HttpStatus.NOT_FOUND);
+            customResponse.setMensaje("Not found Ventas with folio = "+folio);
+            customResponse.setData(ventaService.getVentaByFolio(folio));
+        }else{
+            customResponse.setHttpCode(HttpStatus.OK);
+            customResponse.setMensaje("Show all matches with folio = "+folio);
+            customResponse.setData(ventaService.getVentaByFolio(folio));
+        }
         return customResponse;
     }
 
