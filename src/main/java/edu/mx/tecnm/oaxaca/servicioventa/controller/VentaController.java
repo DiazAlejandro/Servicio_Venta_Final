@@ -92,4 +92,13 @@ public class VentaController {
         }
         return customResponse;
     }
+    
+    @GetMapping("/venta/folio/{folio}")
+    public CustomResponse deleteVentaByFolio (@PathVariable String folio) {
+        CustomResponse customResponse = new CustomResponse();
+        VentaModel venta = ventaService.getVentaByFolio(folio);
+        int idVenta = venta.getId();
+        ventaService.deleteVenta(idVenta);
+        return customResponse;
+    }
 }
