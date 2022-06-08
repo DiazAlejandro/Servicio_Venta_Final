@@ -5,6 +5,7 @@
 package edu.mx.tecnm.oaxaca.servicioventa.repository;
 
 import edu.mx.tecnm.oaxaca.servicioventa.model.VentaModel;
+import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +18,7 @@ public interface VentaRepository extends JpaRepository<VentaModel, Integer>{
     public VentaModel findById(int idVenta);
     
     public VentaModel findByFolio(String folio);
-    
+
+    @Transactional
+    public void deleteByFolioVenta(String folio);
 }
