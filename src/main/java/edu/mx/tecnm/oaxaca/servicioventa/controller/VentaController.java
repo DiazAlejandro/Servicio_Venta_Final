@@ -59,14 +59,6 @@ public class VentaController {
         }
         return customResponse;
     }
-    
-    @GetMapping("/venta/folio/{folio}")
-    public CustomResponse getVentaFolio (@PathVariable String folio) {
-        CustomResponse customResponse = new CustomResponse();
-        
-        customResponse.setData(ventaService.getVentaByFolio(folio));
-        return customResponse;
-    }
 
     @PutMapping("/venta/{idVenta}")
     public CustomResponse updateVenta(@RequestBody VentaModel venta, @PathVariable Integer idVenta) {
@@ -83,6 +75,21 @@ public class VentaController {
         ventaService.deleteVenta(idVenta);
         customResponse.setHttpCode(HttpStatus.NO_CONTENT);
         customResponse.setMensaje("Delete success");
+        return customResponse;
+    }
+    
+    @GetMapping("/venta/folio/{folio}")
+    public CustomResponse getVentaFolio (@PathVariable String folio) {
+        CustomResponse customResponse = new CustomResponse();
+        if (ventaService.getVentaByFolio(folio) == null){
+            customResponse.setHttpCode(HttpStatus.NOT_FOUND);
+            customResponse.setMensaje("Not found Ventas with folio = "+folio);
+            customResponse.setData(ventaService.getVentaByFolio(folio));
+        }else{
+            customResponse.setHttpCode(HttpStatus.OK);
+            customResponse.setMensaje("Show all matches with folio = "+folio);
+            customResponse.setData(ventaService.getVentaByFolio(folio));
+        }
         return customResponse;
     }
 }
