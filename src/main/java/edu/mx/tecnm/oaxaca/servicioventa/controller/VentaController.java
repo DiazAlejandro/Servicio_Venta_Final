@@ -119,7 +119,7 @@ public class VentaController {
         } else {
             ventaService.updateVenta(venta, venta_model.getId());
             customResponse.setHttpCode(HttpStatus.ACCEPTED);
-            customResponse.setMensaje("Delete success");
+            customResponse.setMensaje("Update success");
         }
         return customResponse;
     }
