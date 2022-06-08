@@ -7,6 +7,7 @@ package edu.mx.tecnm.oaxaca.servicioventa.controller;
 import edu.mx.tecnm.oaxaca.servicioventa.model.VentaModel;
 import edu.mx.tecnm.oaxaca.servicioventa.service.VentaService;
 import edu.mx.tecnm.oaxaca.servicioventa.utils.CustomResponse;
+import java.util.List;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class VentaController {
         ventaService.registarVenta(venta);
         customResponse.setHttpCode(HttpStatus.CREATED);
         customResponse.setMensaje("Success");
+        customResponse.setData(getVentasLastIndex().getId());
         return customResponse;
     }
 
@@ -122,5 +124,16 @@ public class VentaController {
             customResponse.setMensaje("Update success");
         }
         return customResponse;
+    }
+   
+    public VentaModel getVentasLastIndex() {
+        if (ventaService.getVentas().isEmpty()) {
+
+        } else {
+            int last_inx = ventaService.getVentas().size()-1;
+            List <VentaModel> vta = ventaService.getVentas();
+            return vta.get(last_inx);
+        }
+        return null;
     }
 }
