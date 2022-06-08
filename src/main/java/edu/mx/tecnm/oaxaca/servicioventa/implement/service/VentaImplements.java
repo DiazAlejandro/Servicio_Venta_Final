@@ -47,25 +47,9 @@ public class VentaImplements implements VentaService {
         ventaRepository.deleteById(idVenta);
     }
 
-    /**
-     * Método para obtener las ventas por folio.
-     * @param folio
-     * @return 
-     */
     @Override
     public VentaModel getVentaByFolio(String folio) {
         return ventaRepository.findByFolio(folio);
-    }
-
-    @Override
-    public void updateVentaByFolio(VentaModel ventaModel, String folio) {
-        ventaModel.setFolio(folio);
-        ventaRepository.save(ventaModel);
-    }
-
-    @Override
-    public void deleteVentaByFolio(String folio) {
-        ventaRepository.deleteByFolioVenta(folio);
     }
     
 }

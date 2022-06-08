@@ -59,6 +59,14 @@ public class VentaController {
         }
         return customResponse;
     }
+    
+    @GetMapping("/venta/folio/{folio}")
+    public CustomResponse getVentaFolio (@PathVariable String folio) {
+        CustomResponse customResponse = new CustomResponse();
+        
+        customResponse.setData(ventaService.getVentaByFolio(folio));
+        return customResponse;
+    }
 
     @PutMapping("/venta/{idVenta}")
     public CustomResponse updateVenta(@RequestBody VentaModel venta, @PathVariable Integer idVenta) {

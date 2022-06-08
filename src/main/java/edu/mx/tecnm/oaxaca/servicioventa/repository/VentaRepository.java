@@ -19,6 +19,4 @@ public interface VentaRepository extends JpaRepository<VentaModel, Integer>{
     
     public VentaModel findByFolio(String folio);
 
-    @Transactional
-    public void deleteByFolioVenta(String folio);
 }
