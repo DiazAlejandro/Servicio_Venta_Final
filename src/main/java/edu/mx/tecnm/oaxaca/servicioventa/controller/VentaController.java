@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 public class VentaController {
-    
+
     @Autowired
     private VentaService ventaService;
-    
+
     @PostMapping("/venta")
     public CustomResponse registrarVenta(@RequestBody VentaModel venta) {
         CustomResponse customResponse = new CustomResponse();
@@ -31,28 +31,28 @@ public class VentaController {
         customResponse.setMensaje("Success");
         return customResponse;
     }
-    
+
     @GetMapping("/venta")
     public CustomResponse getVentas() {
         CustomResponse customResponse = new CustomResponse();
-        if (ventaService.getVentas().isEmpty()){
+        if (ventaService.getVentas().isEmpty()) {
             customResponse.setHttpCode(HttpStatus.NO_CONTENT);
             customResponse.setMensaje("Not found Ventas in this table");
-        }else{
+        } else {
             customResponse.setData(ventaService.getVentas());
             customResponse.setHttpCode(HttpStatus.OK);
             customResponse.setMensaje("Showing all records");
         }
         return customResponse;
     }
-    
+
     @GetMapping("/venta/{idVenta}")
     public CustomResponse getVenta(@PathVariable int idVenta) {
         CustomResponse customResponse = new CustomResponse();
-        if (ventaService.getVenta(idVenta) == null){
+        if (ventaService.getVenta(idVenta) == null) {
             customResponse.setHttpCode(HttpStatus.NOT_FOUND);
-            customResponse.setMensaje("Not found Ventas with id = "+idVenta);
-        }else{
+            customResponse.setMensaje("Not found Ventas with id = " + idVenta);
+        } else {
             customResponse.setData(ventaService.getVenta(idVenta));
             customResponse.setHttpCode(HttpStatus.OK);
             customResponse.setMensaje("Showing all matches");
@@ -77,29 +77,36 @@ public class VentaController {
         customResponse.setMensaje("Delete success");
         return customResponse;
     }
-    
+
     @GetMapping("/venta/folio/{folio}")
-    public CustomResponse getVentaFolio (@PathVariable String folio) {
+    public CustomResponse getVentaFolio(@PathVariable String folio) {
         CustomResponse customResponse = new CustomResponse();
-        if (ventaService.getVentaByFolio(folio) == null){
+        if (ventaService.getVentaByFolio(folio) == null) {
             customResponse.setHttpCode(HttpStatus.NOT_FOUND);
-            customResponse.setMensaje("Not found Ventas with folio = "+folio);
+            customResponse.setMensaje("Not found Ventas with folio = " + folio);
             customResponse.setData(ventaService.getVentaByFolio(folio));
-        }else{
+        } else {
             customResponse.setHttpCode(HttpStatus.OK);
-            customResponse.setMensaje("Show all matches with folio = "+folio);
+            customResponse.setMensaje("Show all matches with folio = " + folio);
             customResponse.setData(ventaService.getVentaByFolio(folio));
         }
         return customResponse;
     }
-    
+
     @DeleteMapping("/venta/folio/{folio}")
-    public CustomResponse deleteVentaByFolio (@PathVariable String folio) {
+    public CustomResponse deleteVentaByFolio(@PathVariable String folio) {
         CustomResponse customResponse = new CustomResponse();
         VentaModel venta = ventaService.getVentaByFolio(folio);
-        ventaService.deleteVenta(venta.getId());
-        customResponse.setHttpCode(HttpStatus.NO_CONTENT);
-        customResponse.setMensaje("Delete success");
+        if (venta == null) {
+            customResponse.setHttpCode(HttpStatus.NOT_ACCEPTABLE);
+            customResponse.setMensaje("This acction can't execute, Not found Ventas with folio = " + folio);
+        } else {
+            ventaService.deleteVenta(venta.getId());
+            customResponse.setHttpCode(HttpStatus.ACCEPTED);
+            customResponse.setMensaje("Delete success");
+        }
+
         return customResponse;
     }
+
 }
