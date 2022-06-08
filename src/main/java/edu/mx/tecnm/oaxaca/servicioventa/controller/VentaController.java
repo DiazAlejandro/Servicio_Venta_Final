@@ -97,8 +97,9 @@ public class VentaController {
     public CustomResponse deleteVentaByFolio (@PathVariable String folio) {
         CustomResponse customResponse = new CustomResponse();
         VentaModel venta = ventaService.getVentaByFolio(folio);
-        int idVenta = venta.getId();
-        ventaService.deleteVenta(idVenta);
+        ventaService.deleteVenta(venta.getId());
+        customResponse.setHttpCode(HttpStatus.NO_CONTENT);
+        customResponse.setMensaje("Delete success");
         return customResponse;
     }
 }
