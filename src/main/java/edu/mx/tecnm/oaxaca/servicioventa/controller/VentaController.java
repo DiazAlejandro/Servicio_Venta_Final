@@ -113,7 +113,7 @@ public class VentaController {
     public CustomResponse updateVentaByFolio(@RequestBody VentaModel venta, @PathVariable String folio) {
         CustomResponse customResponse = new CustomResponse();
         VentaModel venta_model = ventaService.getVentaByFolio(folio);
-        if (venta == null) {
+        if (venta_model == null) {
             customResponse.setHttpCode(HttpStatus.NOT_ACCEPTABLE);
             customResponse.setMensaje("This acction can't execute, Not found Ventas with folio = " + folio);
         } else {
