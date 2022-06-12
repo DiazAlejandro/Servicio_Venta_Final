@@ -28,9 +28,9 @@ public class VentaController {
     public CustomResponse registrarVenta(@RequestBody VentaModel venta) {
         CustomResponse customResponse = new CustomResponse();
         boolean flag = true;
-        String data_missing = "Campos que hacen falta: \n";
+        String data_missing = "Campos que hacen falta:";
         if (venta.getFolio().isEmpty()){
-            data_missing.concat("El atributo ficha no puede ir vacío\n");
+            data_missing.concat("El atributo ficha no puede ir vacío");
             flag = false;
         }
         
@@ -44,7 +44,7 @@ public class VentaController {
         } else {
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
-            customResponse.setMensaje("Missing a require parameter\n"+data_missing);
+            customResponse.setMensaje("Missing a require parameter "+data_missing);
         }
         return customResponse;
     }
