@@ -45,6 +45,7 @@ public class VentaDetalleController {
             ventaDetalleService.registarVentaDetalle(ventaDetalle);
             customResponse.setHttpCode(HttpStatus.CREATED);
             customResponse.setMensaje("Successful");
+            customResponse.setData(idVenta);
         } else {
             customResponse.setMensaje("There isn't a sale with the id " + idVenta);
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
