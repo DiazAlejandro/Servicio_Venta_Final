@@ -22,6 +22,7 @@ public class CustomResponse {
         this.httpCode = httpCode;
         data = new LinkedList();
         this.mensaje = "OK";
+        this.code = code;
     }
 
     public CustomResponse() {
