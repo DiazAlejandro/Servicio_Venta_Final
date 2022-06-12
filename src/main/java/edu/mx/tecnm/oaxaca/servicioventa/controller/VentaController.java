@@ -27,10 +27,21 @@ public class VentaController {
     @PostMapping("/venta")
     public CustomResponse registrarVenta(@RequestBody VentaModel venta) {
         CustomResponse customResponse = new CustomResponse();
-        ventaService.registarVenta(venta);
-        customResponse.setHttpCode(HttpStatus.CREATED);
-        customResponse.setMensaje("Success");
-        customResponse.setData(getVentasLastIndex().getId());
+        if (venta.getCambio() > 0 && venta.getCantidadPagada() > 0
+                && venta.getCostoTotal() > 0 && venta.getEstado() != null
+                && venta.getFecha() != null && venta.getFolio() != null
+                && venta.getId() != 0 && venta.getIdFactura() != 0
+                && venta.getObservaciones() != null && venta.getRfc() != null) {
+            ventaService.registarVenta(venta);
+            customResponse.setHttpCode(HttpStatus.CREATED);
+            customResponse.setCode(201);
+            customResponse.setMensaje("Success");
+            customResponse.setData(getVentasLastIndex().getId());
+        } else {
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            customResponse.setMensaje("Missing a require parameter");
+        }
         return customResponse;
     }
 
@@ -125,13 +136,13 @@ public class VentaController {
         }
         return customResponse;
     }
-   
+
     public VentaModel getVentasLastIndex() {
         if (ventaService.getVentas().isEmpty()) {
 
         } else {
-            int last_inx = ventaService.getVentas().size()-1;
-            List <VentaModel> vta = ventaService.getVentas();
+            int last_inx = ventaService.getVentas().size() - 1;
+            List<VentaModel> vta = ventaService.getVentas();
             return vta.get(last_inx);
         }
         return null;
