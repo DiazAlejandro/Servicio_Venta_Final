@@ -15,14 +15,14 @@ public class CustomResponse {
 
     private HttpStatus httpCode;
     private Object data;
-    public String mensaje;
+    public Object mensaje;
     public int code;
 
     public CustomResponse(HttpStatus httpCode, int code) {
         this.httpCode = httpCode;
-        data = new LinkedList();
-        this.mensaje = "OK";
         this.code = code;
+        data = new LinkedList();
+        this.mensaje = new LinkedList();
     }
 
     public CustomResponse() {
@@ -44,11 +44,11 @@ public class CustomResponse {
         this.data = data;
     }
 
-    public String getMensaje() {
+    public Object getMensaje() {
         return mensaje;
     }
 
-    public void setMensaje(String mensaje) {
+    public void setMensaje(Object mensaje) {
         this.mensaje = mensaje;
     }
 
