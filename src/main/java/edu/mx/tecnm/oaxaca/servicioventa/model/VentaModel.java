@@ -42,8 +42,8 @@ public class VentaModel {
     @Column(name = "estatusDelete")
     private boolean estatusDelete;
     
-    @Column(name = "idCliente")
-    private int idCliente;
+    @Column(name = "rfc")
+    private String rfc;
     
     @Column(name = "idFactura")
     private int idFactura;
@@ -51,10 +51,10 @@ public class VentaModel {
     public VentaModel() {
     }
 
-    public VentaModel(int id, String folio, double costoTotal, 
+    public VentaModel(Integer id, String folio, double costoTotal, 
             double cantidadPagada, double cambio, String observaciones, 
             String fecha, String estado, boolean estatusDelete, 
-            int idCliente, int idFactura) {
+            String rfc, int idFactura) {
         this.id = id;
         this.folio = folio;
         this.costoTotal = costoTotal;
@@ -64,7 +64,7 @@ public class VentaModel {
         this.fecha = fecha;
         this.estado = estado;
         this.estatusDelete = estatusDelete;
-        this.idCliente = idCliente;
+        this.rfc = rfc;
         this.idFactura = idFactura;
     }
 
@@ -140,12 +140,12 @@ public class VentaModel {
         this.estatusDelete = estatusDelete;
     }
 
-    public int getIdCliente() {
-        return idCliente;
+    public String getRfc() {
+        return rfc;
     }
 
-    public void setIdCliente(int idCliente) {
-        this.idCliente = idCliente;
+    public void setRfc(String rfc) {
+        this.rfc = rfc;
     }
 
     public int getIdFactura() {
@@ -162,8 +162,8 @@ public class VentaModel {
                 folio + ", costoTotal=" + costoTotal + ", cantidadPagada=" + 
                 cantidadPagada + ", cambio=" + cambio + ", observaciones=" + 
                 observaciones + ", fecha=" + fecha + ", estado=" + 
-                estado + ", estatusDelete=" + estatusDelete + ", idCliente=" + 
-                idCliente + ", idFactura=" + idFactura + '}';
+                estado + ", estatusDelete=" + estatusDelete + ", rfc=" + 
+                rfc + ", idFactura=" + idFactura + '}';
     }
     
     
