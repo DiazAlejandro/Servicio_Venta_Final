@@ -30,7 +30,11 @@ public class VentaController {
         boolean flag = true;
         String data_missing = "Campos que hacen falta:";
         if (venta.getFolio().isEmpty()){
-            data_missing.concat("El atributo ficha no puede ir vacío");
+            data_missing +="El atributo FOLIO no puede ir vacío\n";
+            flag = false;
+        }
+        if (venta.getFolio()==null){
+            data_missing +="El atributo FOLIO tiene que ser instanciado\n";
             flag = false;
         }
         
