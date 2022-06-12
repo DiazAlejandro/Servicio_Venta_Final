@@ -7,6 +7,7 @@ package edu.mx.tecnm.oaxaca.servicioventa.controller;
 import edu.mx.tecnm.oaxaca.servicioventa.model.VentaModel;
 import edu.mx.tecnm.oaxaca.servicioventa.service.VentaService;
 import edu.mx.tecnm.oaxaca.servicioventa.utils.CustomResponse;
+import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -28,13 +29,14 @@ public class VentaController {
     public CustomResponse registrarVenta(@RequestBody VentaModel venta) {
         CustomResponse customResponse = new CustomResponse();
         boolean flag = true;
-        String data_missing = "Campos que hacen falta:";
+        LinkedList atributes = new LinkedList();
+        atributes.add("Campos que hacen falta:");
         if (venta.getFolio().isEmpty()){
-            data_missing +="El atributo FOLIO no puede ir vacío\n";
+            atributes.add("El atributo FOLIO no puede ir vacío");
             flag = false;
         }
         if (venta.getFolio()==null){
-            data_missing +="El atributo FOLIO tiene que ser instanciado\n";
+            atributes.add("El atributo FOLIO tiene que ser instanciado");
             flag = false;
         }
         
@@ -48,7 +50,7 @@ public class VentaController {
         } else {
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
-            customResponse.setMensaje("Missing a require parameter "+data_missing);
+            customResponse.setMensaje(atributes);
         }
         return customResponse;
     }
