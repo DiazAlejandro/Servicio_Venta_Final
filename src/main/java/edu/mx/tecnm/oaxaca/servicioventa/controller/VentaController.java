@@ -39,46 +39,6 @@ public class VentaController {
             atributes.add("El atributo COSTO TOTAL no puede ir vacío");
             flag = false;
         }
-        if (venta.getCostoTotal() < 0) {
-            atributes.add("El atributo COSTO TOTAL no puede ser negativo");
-            flag = false;
-        }
-        if (venta.getCantidadPagada() < venta.getCostoTotal()) {
-            atributes.add("El atributo CANTIDAD PAGADA no puede ser MENOR que COSTO TOTAL");
-            flag = false;
-        }
-        if (venta.getCambio() > venta.getCantidadPagada()) {
-            atributes.add("El atributo CAMBIO no puede ser MAYOR que CANTIDAD PAGADA");
-            flag = false;
-        }
-        if (venta.getCambio() < 0) {
-            atributes.add("El atributo CAMBIO no puede ser NEGATIVO");
-            flag = false;
-        }
-        if (venta.getObservaciones().isEmpty()) {
-            atributes.add("El atributo OBSERVACIONES no puede estar VACIO");
-            flag = false;
-        }
-        if (venta.getFecha().isEmpty()){
-            atributes.add("El atributo FECHA no puede estar VACIO");
-            flag = false;
-        }
-        if (venta.getEstado().isEmpty()){
-            atributes.add("El atributo ESTADO no puede estar VACIO");
-            flag = false;
-        }
-        if(venta.getRfc().isEmpty()){
-            atributes.add("El atributo RFC no puede estar VACIO");
-            flag = false;
-        }
-        if(venta.getRfc().length() < 13 || venta.getRfc().length() > 13){
-            atributes.add("El atributo RFC debe ser de 13 CARACTERES");
-            flag = false;
-        }
-        if(venta.getIdFactura() != 0){
-            atributes.add("El atributo IDFACTURA debe ser un no. válido");
-            flag = false;
-        }
         
         if (flag == true) {
             ventaService.registarVenta(venta);
@@ -126,7 +86,8 @@ public class VentaController {
     public CustomResponse updateVenta(@RequestBody VentaModel venta, @PathVariable Integer idVenta) {
         CustomResponse customResponse = new CustomResponse();
         ventaService.updateVenta(venta, idVenta);
-        customResponse.setHttpCode(HttpStatus.OK);
+        customResponse.setHttpCode(HttpStatus.NO_CONTENT);
+        customResponse.setCode(204);
         customResponse.setMensaje("Update Success");
         return customResponse;
     }
