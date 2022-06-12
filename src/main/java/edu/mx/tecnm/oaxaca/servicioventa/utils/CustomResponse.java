@@ -16,8 +16,9 @@ public class CustomResponse {
     private HttpStatus httpCode;
     private Object data;
     public String mensaje;
+    public int code;
 
-    public CustomResponse(HttpStatus httpCode) {
+    public CustomResponse(HttpStatus httpCode, int code) {
         this.httpCode = httpCode;
         data = new LinkedList();
         this.mensaje = "OK";
@@ -49,6 +50,15 @@ public class CustomResponse {
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
     }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+    
 }
 
 
