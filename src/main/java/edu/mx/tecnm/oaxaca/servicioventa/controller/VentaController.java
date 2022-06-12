@@ -27,11 +27,7 @@ public class VentaController {
     @PostMapping("/venta")
     public CustomResponse registrarVenta(@RequestBody VentaModel venta) {
         CustomResponse customResponse = new CustomResponse();
-        if (venta.getCambio() > 0 && venta.getCantidadPagada() > 0
-                && venta.getCostoTotal() > 0 && venta.getEstado() != null
-                && venta.getFecha() != null && venta.getFolio() != null
-                && venta.getId() != 0 && venta.getIdFactura() != 0
-                && venta.getObservaciones() != null && venta.getRfc() != null) {
+        if (venta.getFolio() != null) {
             ventaService.registarVenta(venta);
             customResponse.setHttpCode(HttpStatus.CREATED);
             customResponse.setCode(201);
