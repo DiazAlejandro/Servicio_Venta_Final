@@ -55,20 +55,20 @@ public class VentaController {
             customResponse.setCode(422);
             flag = false;
         }
-        if (venta.getObservaciones() == null) {
+        if (venta.getObservaciones().isEmpty()) {
             atributes.add("El atributo OBSERVACIONES no puede ir vacío");
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
             flag = false;
         }
-        if (venta.getFecha() == null) {
+        if (venta.getFecha().isEmpty()) {
             atributes.add("El atributo FECHA no puede ir vacío");
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
             flag = false;
         }
-        if (venta.getEstado() == null) {
-            atributes.add("El atributo ESTADI no puede ir vacío");
+        if (venta.getEstado().isEmpty()) {
+            atributes.add("El atributo ESTADO no puede ir vacío");
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
             flag = false;
@@ -79,14 +79,14 @@ public class VentaController {
             customResponse.setCode(422);
             flag = false;
         }
-        if (venta.getRfc() == null) {
+        if (venta.getRfc().isEmpty()) {
             atributes.add("El atributo id no puede ir vacío");
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
             flag = false;
         }
         if (venta.getIdFactura() == 0) {
-            atributes.add("El atributo IF FACTURA no puede ir vacío");
+            atributes.add("El atributo ID FACTURA no puede ir vacío");
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
             flag = false;
