@@ -39,9 +39,58 @@ public class VentaController {
         }
         if (venta.getCostoTotal() == 0.0d) {
             atributes.add("El atributo COSTO TOTAL no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
             flag = false;
         }
-
+        if (venta.getCantidadPagada()== 0.0d) {
+            atributes.add("El atributo CANTIDAD PAGADA no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
+        if (venta.getCambio() == 0.0d) {
+            atributes.add("El atributo CAMBIO no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
+        if (venta.getObservaciones() == null) {
+            atributes.add("El atributo OBSERVACIONES no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
+        if (venta.getFecha() == null) {
+            atributes.add("El atributo FECHA no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
+        if (venta.getEstado() == null) {
+            atributes.add("El atributo ESTADI no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
+        if (venta.isEstatusDelete() == false) {
+            atributes.add("El atributo ESTATUS DELETE no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
+        if (venta.getRfc() == null) {
+            atributes.add("El atributo id no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
+        if (venta.getIdFactura() == 0) {
+            atributes.add("El atributo IF FACTURA no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
         if (flag == true) {
             ventaService.registarVenta(venta);
             customResponse.setHttpCode(HttpStatus.CREATED);
