@@ -36,11 +36,12 @@ public class VentaController {
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
             flag = false;
-        }else if ((venta.getCostoTotal()+"").isEmpty()) {
-                atributes.add("El atributo COSTO TOTAL no puede ir vacío");
-                flag = false;
-            }
-        
+        }
+        if ((venta.getCostoTotal() + "").isEmpty()) {
+            atributes.add("El atributo COSTO TOTAL no puede ir vacío");
+            flag = false;
+        }
+
         if (flag == true) {
             ventaService.registarVenta(venta);
             customResponse.setHttpCode(HttpStatus.CREATED);
