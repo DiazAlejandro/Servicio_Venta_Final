@@ -35,7 +35,7 @@ public class VentaController {
             atributes.add("El atributo FOLIO no puede ir vacío");
             flag = false;
         }
-        if ((venta.getCostoTotal()+"") == null) {
+        if ((Double)venta.getCostoTotal() == null) {
             atributes.add("El atributo COSTO TOTAL no puede ir vacío");
             flag = false;
         }
