@@ -79,18 +79,13 @@ public class VentaController {
             customResponse.setCode(422);
             flag = false;
         }
-        if (venta.getRfc() == null) {
-            atributes.add("El atributo id no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
         if (venta.getIdFactura() == 0) {
             atributes.add("El atributo IF FACTURA no puede ir vacío");
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
             flag = false;
         }
+        
         if (flag == true) {
             ventaService.registarVenta(venta);
             customResponse.setHttpCode(HttpStatus.CREATED);
