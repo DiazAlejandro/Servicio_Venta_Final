@@ -37,7 +37,7 @@ public class VentaController {
             customResponse.setCode(422);
             flag = false;
         }
-        if ((venta.getCostoTotal() + "").isEmpty()) {
+        if (venta.getCostoTotal() == 0.0d) {
             atributes.add("El atributo COSTO TOTAL no puede ir vacío");
             flag = false;
         }
