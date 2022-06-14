@@ -79,7 +79,7 @@ public class VentaController {
             customResponse.setCode(422);
             flag = false;
         }
-        if (venta.getRfc().isEmpty()) {
+        if (venta.getRfc() == null) {
             atributes.add("El atributo id no puede ir vacío");
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
