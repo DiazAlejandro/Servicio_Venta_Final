@@ -31,11 +31,11 @@ public class VentaController {
         boolean flag = true;
         LinkedList atributes = new LinkedList();
         atributes.add("Campos que hacen falta:");
-        if (venta.getFolio().isEmpty()) {
+        if (venta.getFolio() == null) {
             atributes.add("El atributo FOLIO no puede ir vacío");
             flag = false;
         }
-        if ((venta.getCostoTotal()+"").isEmpty()) {
+        if ((venta.getCostoTotal()+"") == null) {
             atributes.add("El atributo COSTO TOTAL no puede ir vacío");
             flag = false;
         }
