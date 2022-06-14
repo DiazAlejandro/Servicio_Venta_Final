@@ -31,14 +31,15 @@ public class VentaController {
         boolean flag = true;
         LinkedList atributes = new LinkedList();
         atributes.add("Campos que hacen falta:");
-        if (venta.getFolio() == null) {
+        if (venta.getFolio().isEmpty()) {
             atributes.add("El atributo FOLIO no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
             flag = false;
-        }
-        if ((Double)venta.getCostoTotal() == null) {
-            atributes.add("El atributo COSTO TOTAL no puede ir vacío");
-            flag = false;
-        }
+        }else if ((venta.getCostoTotal()+"").isEmpty()) {
+                atributes.add("El atributo COSTO TOTAL no puede ir vacío");
+                flag = false;
+            }
         
         if (flag == true) {
             ventaService.registarVenta(venta);
