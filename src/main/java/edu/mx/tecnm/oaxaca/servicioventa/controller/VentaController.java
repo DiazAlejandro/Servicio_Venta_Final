@@ -73,18 +73,6 @@ public class VentaController {
             customResponse.setCode(422);
             flag = false;
         }
-        if (venta.isEstatusDelete() == false) {
-            atributes.add("El atributo ESTATUS DELETE no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
-        if (venta.getIdFactura() == 0) {
-            atributes.add("El atributo IF FACTURA no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
         
         if (flag == true) {
             ventaService.registarVenta(venta);
