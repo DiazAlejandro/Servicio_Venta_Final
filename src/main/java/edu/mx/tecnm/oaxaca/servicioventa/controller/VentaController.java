@@ -32,12 +32,6 @@ public class VentaController {
         boolean flag = true;
         LinkedList atributes = new LinkedList();
         atributes.add("Campos que hacen falta:");
-        if (venta.getFolio().isEmpty()) {
-            atributes.add("El atributo FOLIO no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
         if (venta.getCostoTotal() == 0.0d) {
             atributes.add("El atributo COSTO TOTAL no puede ir vacío");
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
