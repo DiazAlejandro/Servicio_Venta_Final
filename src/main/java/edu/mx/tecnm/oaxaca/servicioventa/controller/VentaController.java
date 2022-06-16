@@ -79,7 +79,8 @@ public class VentaController {
             customResponse.setHttpCode(HttpStatus.CREATED);
             customResponse.setCode(201);
             customResponse.setMensaje("Success");
-            customResponse.setData(getVentasLastIndex().getId());
+            //customResponse.setData(getVentasLastIndex().getId());
+            customResponse.setData(atributes.add(getVentasLastIndex()));
         } else {
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
