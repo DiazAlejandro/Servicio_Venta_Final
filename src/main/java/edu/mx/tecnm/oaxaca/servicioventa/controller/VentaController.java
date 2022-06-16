@@ -71,7 +71,7 @@ public class VentaController {
         
         if (flag == true) {
             int noFolio = getVentasLastIndex().getId();
-            String folio = "VENTA-"+noFolio;
+            String folio = "VENTA-"+noFolio+1;
             venta.setFolio(folio);
             
             ArrayList data = new ArrayList();
