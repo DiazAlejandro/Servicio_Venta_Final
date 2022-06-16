@@ -7,6 +7,7 @@ package edu.mx.tecnm.oaxaca.servicioventa.controller;
 import edu.mx.tecnm.oaxaca.servicioventa.model.VentaModel;
 import edu.mx.tecnm.oaxaca.servicioventa.service.VentaService;
 import edu.mx.tecnm.oaxaca.servicioventa.utils.CustomResponse;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.*;
@@ -75,11 +76,18 @@ public class VentaController {
         }
         
         if (flag == true) {
+            int noFolio = getVentasLastIndex().getId();
+            String folio = "VENTA-"+noFolio;
+            venta.setFolio(folio);
+            
+            ArrayList data = new ArrayList();
+            data.add(folio);
             ventaService.registarVenta(venta);
             customResponse.setHttpCode(HttpStatus.CREATED);
             customResponse.setCode(201);
             customResponse.setMensaje("Success");
-            customResponse.setData(getVentasLastIndex().getId());
+            data.add(noFolio);
+            customResponse.setData(data);
         } else {
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
