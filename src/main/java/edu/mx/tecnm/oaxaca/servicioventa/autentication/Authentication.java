@@ -21,16 +21,30 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class Authentication {
+    
     @Autowired
     private HttpRequest http;
-    
+
+    private final Integer HTTP_OK = 200, HTTP_UNAUTHORIZED = 401;
+
     public void auth(HttpServletRequest request) throws UnauthorizedException, ExternalMicroserviceException, IOException {
         Optional<String> tokenOptional = Optional.ofNullable(request.getHeader("Authorization"));
-        if (!tokenOptional.isPresent())
-            throw new UnauthorizedException();
-        
-        Map<String, Object> result = validateRequestTokenVerficacion(tokenOptional.get());
-        
+   
+            if (!tokenOptional.isPresent()) {
+                throw new UnauthorizedException();
+            }
+            
+            Map<String, Object> result = validateRequestTokenVerficacion(tokenOptional.get());
+            int httpCode = Integer.parseInt(String.valueOf(result.get("status")));
+            
+            if (httpCode == HTTP_UNAUTHORIZED) {
+                throw new UnauthorizedException();
+            }
+
+            if (httpCode != HTTP_OK) {
+                throw new ExternalMicroserviceException(AuthenticationConstans.ERROR_EXTERNAL_MENSAJE_EXCEPTION);
+            }
+       
     }
     
     

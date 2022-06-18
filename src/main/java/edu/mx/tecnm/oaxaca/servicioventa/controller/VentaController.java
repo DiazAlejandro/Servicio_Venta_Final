@@ -46,7 +46,7 @@ public class VentaController {
 
         if (flag == true) {
             //authentication.auth(request);
-            request.getParameterNames();
+            //request.getParameterNames();
             int noFolio = getVentasLastIndex().getId();
             String folio = "VENTA-" + (noFolio + 1);
             venta.setFolio(folio);
