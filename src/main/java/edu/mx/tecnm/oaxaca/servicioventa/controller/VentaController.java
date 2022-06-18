@@ -93,7 +93,7 @@ public class VentaController {
                 customResponse.setCode(201);
                 customResponse.setMensaje("Success");
                 data.add(noFolio);
-
+                data.add(request);
                 
                 customResponse.setData(data);
                 
