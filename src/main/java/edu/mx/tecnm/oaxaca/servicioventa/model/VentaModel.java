@@ -19,7 +19,6 @@ public class VentaModel {
     private Integer id;
     
     @Column(name = "folio")
-    @NotBlank(message = "{NotBlank.venta.folio}")
     private String folio;
 
     @Column(name = "costoTotal")
