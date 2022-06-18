@@ -5,6 +5,8 @@
 package edu.mx.tecnm.oaxaca.servicioventa.controller;
 
 import edu.mx.tecnm.oaxaca.servicioventa.autentication.Authentication;
+import edu.mx.tecnm.oaxaca.servicioventa.exceptions.ExternalMicroserviceException;
+import edu.mx.tecnm.oaxaca.servicioventa.exceptions.UnauthorizedException;
 import edu.mx.tecnm.oaxaca.servicioventa.model.VentaModel;
 import edu.mx.tecnm.oaxaca.servicioventa.service.VentaService;
 import edu.mx.tecnm.oaxaca.servicioventa.utils.CustomResponse;
@@ -14,6 +16,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -32,8 +35,9 @@ public class VentaController {
     private Authentication authentication;
 
     @PostMapping("/venta")
-    public CustomResponse registrarVenta(@RequestBody VentaModel venta,
+    public ResponseEntity registrarVenta(@RequestBody VentaModel venta,
             HttpServletRequest request) {
+        ResponseEntity<CustomResponse> valueResponse = null;
         CustomResponse customResponse = new CustomResponse();
         boolean flag = true;
         LinkedList atributes = new LinkedList();
@@ -90,15 +94,24 @@ public class VentaController {
                 customResponse.setMensaje("Success");
                 data.add(noFolio);
                 customResponse.setData(data);
-            } catch (Exception e) {
+            } catch (UnauthorizedException ex) {
+                customResponse.setData(ex.toJSON());
+                customResponse.setCode(401);
+                valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
+            } catch (ExternalMicroserviceException ex) {
+                customResponse.setData(ex.toJSON());
+                customResponse.setCode(503);
+                valueResponse = ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(customResponse);
+            } catch (Exception ex) {
+                customResponse.setCode(500);
+                valueResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-
         } else {
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
             customResponse.setMensaje(atributes);
         }
-        return customResponse;
+        return valueResponse;
     }
 
     @GetMapping("/venta")
