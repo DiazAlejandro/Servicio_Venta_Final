@@ -19,7 +19,7 @@ public class VentaModel {
     private Integer id;
     
     @Column(name = "folio")
-    @NotBlank(message = "{NotBlank.book.title}")
+    @NotBlank(message = "{NotBlank.venta.folio}")
     private String folio;
 
     @Column(name = "costoTotal")
@@ -46,8 +46,6 @@ public class VentaModel {
     @Column(name = "rfc")
     private String rfc;
     
-    @Column(name = "idFactura")
-    private int idFactura;
 
     public VentaModel() {
     }
@@ -55,7 +53,7 @@ public class VentaModel {
     public VentaModel(Integer id, String folio, double costoTotal, 
             double cantidadPagada, double cambio, String observaciones, 
             String fecha, String estado, boolean estatusDelete, 
-            String rfc, int idFactura) {
+            String rfc) {
         this.id = id;
         this.folio = folio;
         this.costoTotal = costoTotal;
@@ -66,7 +64,6 @@ public class VentaModel {
         this.estado = estado;
         this.estatusDelete = estatusDelete;
         this.rfc = rfc;
-        this.idFactura = idFactura;
     }
 
     public Integer getId() {
@@ -149,14 +146,6 @@ public class VentaModel {
         this.rfc = rfc;
     }
 
-    public int getIdFactura() {
-        return idFactura;
-    }
-
-    public void setIdFactura(int idFactura) {
-        this.idFactura = idFactura;
-    }
-
     @Override
     public String toString() {
         return "VentaModel{" + "id=" + id + ", folio=" + 
@@ -164,7 +153,7 @@ public class VentaModel {
                 cantidadPagada + ", cambio=" + cambio + ", observaciones=" + 
                 observaciones + ", fecha=" + fecha + ", estado=" + 
                 estado + ", estatusDelete=" + estatusDelete + ", rfc=" + 
-                rfc + ", idFactura=" + idFactura + '}';
+                rfc +'}';
     }
     
     
