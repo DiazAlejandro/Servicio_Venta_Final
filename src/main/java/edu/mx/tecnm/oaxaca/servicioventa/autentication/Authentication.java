@@ -33,6 +33,7 @@ public class Authentication {
         
     }
     
+    
     private Map<String, Object> validateRequestTokenVerficacion(String token) throws IOException {
         Map<String, Object> basicRequest = http.createBasicDataRequest(TipoRespuestaParseEnum.MAP);
         basicRequest.put("url", AuthenticationConstans.URL_AUTH + token);
