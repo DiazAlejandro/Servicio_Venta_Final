@@ -81,7 +81,7 @@ public class VentaController {
 
         if (flag == true) {
             try {
-                authentication.auth(request);
+                //authentication.auth(request);
                 int noFolio = getVentasLastIndex().getId();
                 String folio = "VENTA-" + (noFolio + 1);
                 venta.setFolio(folio);
@@ -94,14 +94,14 @@ public class VentaController {
                 customResponse.setMensaje("Success");
                 data.add(noFolio);
                 customResponse.setData(data);
-            } catch (UnauthorizedException ex) {
+            /**} catch (UnauthorizedException ex) {
                 customResponse.setData(ex.toJSON());
                 customResponse.setCode(401);
                 valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
             } catch (ExternalMicroserviceException ex) {
                 customResponse.setData(ex.toJSON());
                 customResponse.setCode(503);
-                valueResponse = ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(customResponse);
+                valueResponse = ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(customResponse);*/
             } catch (Exception ex) {
                 customResponse.setCode(500);
                 valueResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
