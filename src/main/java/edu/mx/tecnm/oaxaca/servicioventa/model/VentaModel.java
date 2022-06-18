@@ -4,8 +4,8 @@
  */
 package edu.mx.tecnm.oaxaca.servicioventa.model;
 
+import javax.validation.constraints.NotBlank;
 import javax.persistence.*;
-
 /**
  *
  * @author aleja
@@ -17,8 +17,9 @@ public class VentaModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-
+    
     @Column(name = "folio")
+    @NotBlank(message = "{NotBlank.book.title}")
     private String folio;
 
     @Column(name = "costoTotal")

@@ -4,12 +4,14 @@
  */
 package edu.mx.tecnm.oaxaca.servicioventa.controller;
 
+import edu.mx.tecnm.oaxaca.servicioventa.autentication.Authentication;
 import edu.mx.tecnm.oaxaca.servicioventa.model.VentaModel;
 import edu.mx.tecnm.oaxaca.servicioventa.service.VentaService;
 import edu.mx.tecnm.oaxaca.servicioventa.utils.CustomResponse;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +28,12 @@ public class VentaController {
     @Autowired
     private VentaService ventaService;
 
+    @Autowired
+    private Authentication authentication;
+
     @PostMapping("/venta")
-    public CustomResponse registrarVenta(@RequestBody VentaModel venta) {
+    public CustomResponse registrarVenta(@RequestBody VentaModel venta,
+            HttpServletRequest request) {
         CustomResponse customResponse = new CustomResponse();
         boolean flag = true;
         LinkedList atributes = new LinkedList();
@@ -38,7 +44,7 @@ public class VentaController {
             customResponse.setCode(422);
             flag = false;
         }
-        if (venta.getCantidadPagada()== 0.0d) {
+        if (venta.getCantidadPagada() == 0.0d) {
             atributes.add("El atributo CANTIDAD PAGADA no puede ir vacío");
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
@@ -68,20 +74,25 @@ public class VentaController {
             customResponse.setCode(422);
             flag = false;
         }
-        
+
         if (flag == true) {
-            int noFolio = getVentasLastIndex().getId();
-            String folio = "VENTA-"+(noFolio+1);
-            venta.setFolio(folio);
-            
-            ArrayList data = new ArrayList();
-            data.add(folio);
-            ventaService.registarVenta(venta);
-            customResponse.setHttpCode(HttpStatus.CREATED);
-            customResponse.setCode(201);
-            customResponse.setMensaje("Success");
-            data.add(noFolio);
-            customResponse.setData(data);
+            try {
+                authentication.auth(request);
+                int noFolio = getVentasLastIndex().getId();
+                String folio = "VENTA-" + (noFolio + 1);
+                venta.setFolio(folio);
+
+                ArrayList data = new ArrayList();
+                data.add(folio);
+                ventaService.registarVenta(venta);
+                customResponse.setHttpCode(HttpStatus.CREATED);
+                customResponse.setCode(201);
+                customResponse.setMensaje("Success");
+                data.add(noFolio);
+                customResponse.setData(data);
+            } catch (Exception e) {
+            }
+
         } else {
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
