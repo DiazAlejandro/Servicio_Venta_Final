@@ -35,7 +35,7 @@ public class VentaController {
     private Authentication authentication;
 
     @PostMapping("/venta")
-    public ResponseEntity registrarVenta(@RequestBody VentaModel venta,
+    public CustomResponse registrarVenta(@RequestBody VentaModel venta,
             HttpServletRequest request) {
         ResponseEntity<CustomResponse> valueResponse = null;
         CustomResponse customResponse = new CustomResponse();
@@ -95,12 +95,13 @@ public class VentaController {
                 data.add(noFolio);
                 data.add(request.getParameterNames());
                 customResponse.setData(data);
+                
         } else {
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
             customResponse.setMensaje(atributes);
         }
-        return valueResponse;
+        return customResponse;
     }
 
     @GetMapping("/venta")
