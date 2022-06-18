@@ -10,6 +10,8 @@ import edu.mx.tecnm.oaxaca.servicioventa.exceptions.UnauthorizedException;
 import edu.mx.tecnm.oaxaca.servicioventa.model.VentaModel;
 import edu.mx.tecnm.oaxaca.servicioventa.service.VentaService;
 import edu.mx.tecnm.oaxaca.servicioventa.utils.CustomResponse;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,67 +38,43 @@ public class VentaController {
 
     @PostMapping("/venta")
     public CustomResponse registrarVenta(@RequestBody VentaModel venta,
-            HttpServletRequest request) {
+            HttpServletRequest request) throws IOException {
         ResponseEntity<CustomResponse> valueResponse = null;
         CustomResponse customResponse = new CustomResponse();
         boolean flag = true;
         LinkedList atributes = new LinkedList();
-        atributes.add("Campos que hacen falta:");
-        if (venta.getCostoTotal() == 0.0d) {
-            atributes.add("El atributo COSTO TOTAL no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
-        if (venta.getCantidadPagada() == 0.0d) {
-            atributes.add("El atributo CANTIDAD PAGADA no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
-        if (venta.getCambio() == 0.0d) {
-            atributes.add("El atributo CAMBIO no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
-        if (venta.getObservaciones() == null) {
-            atributes.add("El atributo OBSERVACIONES no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
-        if (venta.getFecha() == null) {
-            atributes.add("El atributo FECHA no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
-        if (venta.getEstado() == null) {
-            atributes.add("El atributo ESTADI no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
 
         if (flag == true) {
-                //authentication.auth(request);
-                request.getParameterNames();
-                int noFolio = getVentasLastIndex().getId();
-                String folio = "VENTA-" + (noFolio + 1);
-                venta.setFolio(folio);
+            //authentication.auth(request);
+            request.getParameterNames();
+            int noFolio = getVentasLastIndex().getId();
+            String folio = "VENTA-" + (noFolio + 1);
+            venta.setFolio(folio);
 
-                ArrayList data = new ArrayList();
-                data.add(folio);
-                ventaService.registarVenta(venta);
-                customResponse.setHttpCode(HttpStatus.CREATED);
-                customResponse.setCode(201);
-                customResponse.setMensaje("Success");
-                data.add(noFolio);
-                data.add(request);
-                
-                customResponse.setData(data);
-                
+            ArrayList data = new ArrayList();
+            data.add(folio);
+            ventaService.registarVenta(venta);
+            customResponse.setHttpCode(HttpStatus.CREATED);
+            customResponse.setCode(201);
+            customResponse.setMensaje("Success");
+            data.add(noFolio);
+            //data.add(request);
+            
+            StringBuilder sb = new StringBuilder();
+            BufferedReader reader = request.getReader();
+            try {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append('\n');
+                }
+            } finally {
+                reader.close();
+            }
+            System.out.println(sb.toString());
+            data.add(sb.toString());
+
+            customResponse.setData(data);
+
         } else {
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
