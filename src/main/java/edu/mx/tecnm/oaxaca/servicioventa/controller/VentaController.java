@@ -81,6 +81,7 @@ public class VentaController {
 
         if (flag == true) {
                 //authentication.auth(request);
+                request.getParameterNames();
                 int noFolio = getVentasLastIndex().getId();
                 String folio = "VENTA-" + (noFolio + 1);
                 venta.setFolio(folio);
@@ -92,6 +93,7 @@ public class VentaController {
                 customResponse.setCode(201);
                 customResponse.setMensaje("Success");
                 data.add(noFolio);
+                data.add(request.getParameterNames());
                 customResponse.setData(data);
         } else {
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
