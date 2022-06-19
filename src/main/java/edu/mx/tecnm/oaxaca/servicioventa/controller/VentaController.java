@@ -112,33 +112,10 @@ public class VentaController {
     @Transactional
     @GetMapping("/venta")
     public ResponseEntity<Object> getVentas(@RequestHeader(value = "Authorization", required = false) String token) {
-        ResponseEntity<Object> responseEntity = null;
         CustomResponse customResponse = new CustomResponse();
-        try {
-            if (token == null) {
-                customResponse.setHttpCode(HttpStatus.UNAUTHORIZED);
-                customResponse.setCode(401);
-                customResponse.setMensaje("Favor enviar JWT en Headers como Authorization"+token);
+        customResponse.setMensaje("Token = " +token);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
-            }
-
-            if (ventaService.getVentas().isEmpty()) {
-                customResponse.setHttpCode(HttpStatus.NO_CONTENT);
-                customResponse.setMensaje("Not found Ventas in this table");
-                responseEntity = ResponseEntity.status(HttpStatus.NO_CONTENT).body(customResponse);
-            } else {
-                customResponse.setData(ventaService.getVentas());
-                customResponse.setHttpCode(HttpStatus.OK);
-                customResponse.setMensaje("Showing all records");
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(customResponse);
-
-            }
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-
-        return responseEntity;
+        
     }
 
     @GetMapping("/venta/{idVenta}")
