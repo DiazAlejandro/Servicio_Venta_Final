@@ -158,7 +158,7 @@ public class VentaController {
             customResponse.setData(ventaService.getVentaByFolio(folio));
         } else {
             customResponse.setHttpCode(HttpStatus.OK);
-            customResponse.setHttpCode(200);
+            customResponse.setCode(200);
             customResponse.setMensaje("Show all matches with folio = " + folio);
             customResponse.setData(ventaService.getVentaByFolio(folio));
         }
