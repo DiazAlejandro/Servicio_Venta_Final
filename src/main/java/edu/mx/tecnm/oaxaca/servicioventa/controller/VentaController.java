@@ -113,19 +113,22 @@ public class VentaController {
             customResponse.setCode(401);
             customResponse.setMensaje("Favor enviar JWT en Headers como Authorization");
             responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
+        }else{
+            if (ventaService.getVentas().isEmpty()) {
+                customResponse.setHttpCode(HttpStatus.NO_CONTENT);
+                customResponse.setMensaje("Not found Ventas in this table");
+                responseEntity = ResponseEntity.status(HttpStatus.NO_CONTENT).body(customResponse);
+            } else {
+                customResponse.setData(ventaService.getVentas());
+                customResponse.setHttpCode(HttpStatus.OK);
+                customResponse.setMensaje("Showing all records");
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(customResponse);
+
+            }
+        
         }
         
-        if (ventaService.getVentas().isEmpty()) {
-            customResponse.setHttpCode(HttpStatus.NO_CONTENT);
-            customResponse.setMensaje("Not found Ventas in this table");
-            responseEntity = ResponseEntity.status(HttpStatus.NO_CONTENT).body(customResponse);
-        } else {
-            customResponse.setData(ventaService.getVentas());
-            customResponse.setHttpCode(HttpStatus.OK);
-            customResponse.setMensaje("Showing all records");
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(customResponse);
-
-        }
+        
         return responseEntity;
     }
 
