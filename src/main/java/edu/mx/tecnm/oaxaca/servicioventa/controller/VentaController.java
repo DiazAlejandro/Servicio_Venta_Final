@@ -28,20 +28,18 @@ public class VentaController {
     private VentaService ventaService;
 
     @PostMapping("/venta")
-    public ResponseEntity<Object> registrarVenta
-        (@RequestHeader(value = "Authorization", required = false) String token, 
-                @RequestBody VentaModel venta) {
-            ResponseEntity<Object> responseEntity = null;
+    public ResponseEntity<Object> registrarVenta(@RequestHeader(value = "Authorization", required = false) String token,
+            @RequestBody VentaModel venta) {
+        ResponseEntity<Object> responseEntity = null;
         CustomResponse customResponse = new CustomResponse();
-        
-        if(token == null){
+
+        if (token == null) {
             customResponse.setHttpCode(HttpStatus.UNAUTHORIZED);
             customResponse.setCode(401);
             customResponse.setMensaje("Favor enviar JWT en Headers como Authorization");
             responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
         }
-        
-        
+
         boolean flag = true;
         LinkedList atributes = new LinkedList();
         atributes.add("Campos que hacen falta:");
@@ -51,7 +49,7 @@ public class VentaController {
             customResponse.setCode(422);
             flag = false;
         }
-        if (venta.getCantidadPagada()== 0.0d) {
+        if (venta.getCantidadPagada() == 0.0d) {
             atributes.add("El atributo CANTIDAD PAGADA no puede ir vacío");
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
@@ -81,12 +79,12 @@ public class VentaController {
             customResponse.setCode(422);
             flag = false;
         }
-        
+
         if (flag == true) {
             int noFolio = getVentasLastIndex().getId();
-            String folio = "VENTA-"+(noFolio+1);
+            String folio = "VENTA-" + (noFolio + 1);
             venta.setFolio(folio);
-            
+
             ArrayList data = new ArrayList();
             data.add(folio);
             ventaService.registarVenta(venta);
@@ -101,23 +99,34 @@ public class VentaController {
             customResponse.setCode(422);
             customResponse.setMensaje(atributes);
         }
-        
-        
+
         return responseEntity;
     }
 
     @GetMapping("/venta")
-    public CustomResponse getVentas() {
+    public ResponseEntity<Object> getVentas(@RequestHeader(value = "Authorization", required = false) String token) {
+        ResponseEntity<Object> responseEntity = null;
         CustomResponse customResponse = new CustomResponse();
+
+        if (token == null) {
+            customResponse.setHttpCode(HttpStatus.UNAUTHORIZED);
+            customResponse.setCode(401);
+            customResponse.setMensaje("Favor enviar JWT en Headers como Authorization");
+            responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
+        }
+        
         if (ventaService.getVentas().isEmpty()) {
             customResponse.setHttpCode(HttpStatus.NO_CONTENT);
             customResponse.setMensaje("Not found Ventas in this table");
+            responseEntity = ResponseEntity.status(HttpStatus.NO_CONTENT).body(customResponse);
         } else {
             customResponse.setData(ventaService.getVentas());
             customResponse.setHttpCode(HttpStatus.OK);
             customResponse.setMensaje("Showing all records");
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(customResponse);
+
         }
-        return customResponse;
+        return responseEntity;
     }
 
     @GetMapping("/venta/{idVenta}")
