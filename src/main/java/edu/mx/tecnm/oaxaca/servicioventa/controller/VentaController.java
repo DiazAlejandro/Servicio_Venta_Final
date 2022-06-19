@@ -29,7 +29,7 @@ public class VentaController {
 
     @Autowired
     private VentaService ventaService;
-    
+
     @Autowired
     private Auth auth;
 
@@ -108,13 +108,13 @@ public class VentaController {
 
         return responseEntity;
     }
-    
-       @GetMapping("/venta")
+
+    @GetMapping("/venta")
     public ResponseEntity<Object> getVentas(@RequestHeader String authorization) {
         CustomResponse customResponse = new CustomResponse();
-		customResponse.setMensaje("printing the auth "+authorization);
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
-	
+        customResponse.setMensaje("printing the auth " + authorization);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
+
     }
 
     @GetMapping("/venta/{idVenta}")
