@@ -11,6 +11,7 @@ import edu.mx.tecnm.oaxaca.servicioventa.utils.CustomResponse;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,15 +28,14 @@ public class VentaController {
 
     @Autowired
     private VentaService ventaService;
-    
+
     private final Auth auth;
-    
+
     @Autowired
     public VentaController(Auth auth) {
         this.auth = auth;
     }
-    
-    
+
     @PostMapping("/venta")
     public ResponseEntity<Object> registrarVenta(@RequestHeader(value = "Authorization", required = false) String token,
             @RequestBody VentaModel venta) {
@@ -116,13 +116,14 @@ public class VentaController {
     public ResponseEntity<Object> getVentas(@RequestHeader(value = "Authorization", required = false) String token) {
         ResponseEntity<Object> responseEntity = null;
         CustomResponse customResponse = new CustomResponse();
+        try {
+            if (token == null) {
+                customResponse.setHttpCode(HttpStatus.UNAUTHORIZED);
+                customResponse.setCode(401);
+                customResponse.setMensaje("Favor enviar JWT en Headers como Authorization");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
+            }
 
-        if (token == null) {
-            customResponse.setHttpCode(HttpStatus.UNAUTHORIZED);
-            customResponse.setCode(401);
-            customResponse.setMensaje("Favor enviar JWT en Headers como Authorization");
-            responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
-        }else{
             if (ventaService.getVentas().isEmpty()) {
                 customResponse.setHttpCode(HttpStatus.NO_CONTENT);
                 customResponse.setMensaje("Not found Ventas in this table");
@@ -134,10 +135,11 @@ public class VentaController {
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(customResponse);
 
             }
-        
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        
-        
+
         return responseEntity;
     }
 
