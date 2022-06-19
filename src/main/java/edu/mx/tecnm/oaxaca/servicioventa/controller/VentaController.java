@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +29,9 @@ public class VentaController {
 
     @Autowired
     private VentaService ventaService;
-
-    private final Auth auth;
-
+    
     @Autowired
-    public VentaController(Auth auth) {
-        this.auth = auth;
-    }
+    private Auth auth;
 
     @PostMapping("/venta")
     public ResponseEntity<Object> registrarVenta(@RequestHeader(value = "Authorization", required = false) String token,
@@ -111,7 +108,8 @@ public class VentaController {
 
         return responseEntity;
     }
-
+    
+    @Transactional
     @GetMapping("/venta")
     public ResponseEntity<Object> getVentas(@RequestHeader(value = "Authorization", required = false) String token) {
         ResponseEntity<Object> responseEntity = null;
@@ -120,7 +118,7 @@ public class VentaController {
             if (token == null) {
                 customResponse.setHttpCode(HttpStatus.UNAUTHORIZED);
                 customResponse.setCode(401);
-                customResponse.setMensaje("Favor enviar JWT en Headers como Authorization");
+                customResponse.setMensaje("Favor enviar JWT en Headers como Authorization"+token);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
             }
 
