@@ -110,7 +110,7 @@ public class VentaController {
     }
 
     @GetMapping("/venta")
-    public ResponseEntity<Object> getVentas(@RequestHeader String authorization) {
+    public ResponseEntity<Object> getVentas(@RequestHeader(value = "Authorization", required = false) String authorization) {
         CustomResponse customResponse = new CustomResponse();
         customResponse.setMensaje("printing the auth " + authorization);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
