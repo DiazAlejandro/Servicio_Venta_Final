@@ -152,11 +152,13 @@ public class VentaController {
     public CustomResponse getVentaFolio(@PathVariable String folio) {
         CustomResponse customResponse = new CustomResponse();
         if (ventaService.getVentaByFolio(folio) == null) {
-            customResponse.setHttpCode(HttpStatus.NOT_FOUND);
+            customResponse.setHttpCode(HttpStatus.NO_CONTENT);
+            customResponse.setCode(204);
             customResponse.setMensaje("Not found Ventas with folio = " + folio);
             customResponse.setData(ventaService.getVentaByFolio(folio));
         } else {
             customResponse.setHttpCode(HttpStatus.OK);
+            customResponse.setHttpCode(200);
             customResponse.setMensaje("Show all matches with folio = " + folio);
             customResponse.setData(ventaService.getVentaByFolio(folio));
         }
