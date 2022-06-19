@@ -60,7 +60,7 @@ public class VentaController {
             if (venta.getCostoTotal() > venta.getCantidadPagada()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                         new CustomResponse("La cantidad a pagar tiene que ser mayor al costo total", 204));
-            }
+            }   
 
             int noFolio = getVentasLastIndex().getId();
             String folio = "VENTA-" + (noFolio + 1);
@@ -117,11 +117,13 @@ public class VentaController {
     public CustomResponse getVenta(@PathVariable int idVenta) {
         CustomResponse customResponse = new CustomResponse();
         if (ventaService.getVenta(idVenta) == null) {
-            customResponse.setHttpCode(HttpStatus.NOT_FOUND);
+            customResponse.setHttpCode(HttpStatus.NO_CONTENT);
+            customResponse.setCode(204);
             customResponse.setMensaje("Not found Ventas with id = " + idVenta);
         } else {
             customResponse.setData(ventaService.getVenta(idVenta));
             customResponse.setHttpCode(HttpStatus.OK);
+            customResponse.setCode(200);
             customResponse.setMensaje("Showing all matches");
         }
         return customResponse;
