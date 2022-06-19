@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -111,17 +109,12 @@ public class VentaController {
         return responseEntity;
     }
     
-    @ResponseBody
-    @RequestMapping(value = "/venta", method = RequestMethod.GET)
-    public ResponseEntity<Object> getVentas(
-            @RequestHeader("Authorization") String basicAuth, 
-            HttpServletRequest request,
-            HttpServletResponse response) {
-        
+       @GetMapping("/venta")
+    public ResponseEntity<Object> getVentas(@RequestHeader String authorization) {
         CustomResponse customResponse = new CustomResponse();
-        customResponse.setMensaje("Token = " +basicAuth);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
-        
+		customResponse.setMensaje("printing the auth "+authorization);
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
+	
     }
 
     @GetMapping("/venta/{idVenta}")
