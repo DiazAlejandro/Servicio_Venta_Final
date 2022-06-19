@@ -34,59 +34,34 @@ public class VentaController {
     private Auth auth;
 
     @PostMapping("/venta")
-    public ResponseEntity<Object> registrarVenta(@RequestHeader(value = "Authorization", required = false) String token,
+    public ResponseEntity<Object> registrarVenta(@RequestHeader(value = "Authorization", required = false) String authorization,
             @RequestBody VentaModel venta) {
+
         ResponseEntity<Object> responseEntity = null;
         CustomResponse customResponse = new CustomResponse();
-
-        if (token == null) {
-            customResponse.setHttpCode(HttpStatus.UNAUTHORIZED);
-            customResponse.setCode(401);
-            customResponse.setMensaje("Favor enviar JWT en Headers como Authorization");
-            responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
-        }
-
         boolean flag = true;
         LinkedList atributes = new LinkedList();
-        atributes.add("Campos que hacen falta:");
-        if (venta.getCostoTotal() == 0.0d) {
-            atributes.add("El atributo COSTO TOTAL no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
-        if (venta.getCantidadPagada() == 0.0d) {
-            atributes.add("El atributo CANTIDAD PAGADA no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
-        if (venta.getCambio() == 0.0d) {
-            atributes.add("El atributo CAMBIO no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
-        if (venta.getObservaciones() == null) {
-            atributes.add("El atributo OBSERVACIONES no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
-        if (venta.getFecha() == null) {
-            atributes.add("El atributo FECHA no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
-        if (venta.getEstado() == null) {
-            atributes.add("El atributo ESTADI no puede ir vacío");
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            flag = false;
-        }
 
-        if (flag == true) {
+        try {
+            if (authorization == null) {
+                customResponse.setHttpCode(HttpStatus.UNAUTHORIZED);
+                customResponse.setCode(401);
+                customResponse.setMensaje("Please, send a JWT Headers like Authorization");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
+            }
+            if (!auth.verifyToken(authorization)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse("JWT invalid or expired", 401));
+            }
+            if (venta == null) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
+                        new CustomResponse("Process invalid", 204));
+            }
+            if (venta.getCostoTotal() > venta.getCantidadPagada()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new CustomResponse("La cantidad a pagar tiene que ser mayor al costo total", 204));
+            }
+
             int noFolio = getVentasLastIndex().getId();
             String folio = "VENTA-" + (noFolio + 1);
             venta.setFolio(folio);
@@ -100,10 +75,10 @@ public class VentaController {
             data.add(noFolio);
             customResponse.setData(data);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(customResponse);
-        } else {
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
-            customResponse.setCode(422);
-            customResponse.setMensaje(atributes);
+
+        } catch (Exception e) {
+            customResponse.setMensaje(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
         }
 
         return responseEntity;
@@ -117,29 +92,27 @@ public class VentaController {
             if (authorization == null) {
                 customResponse.setHttpCode(HttpStatus.UNAUTHORIZED);
                 customResponse.setCode(401);
-                customResponse.setMensaje("Favor enviar JWT en Headers como Authorization");
+                customResponse.setMensaje("Please, send a JWT Headers like Authorization");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
             }
-
             if (ventaService.getVentas().isEmpty()) {
                 customResponse.setHttpCode(HttpStatus.NO_CONTENT);
                 customResponse.setMensaje("Not found Ventas in this table");
-                responseEntity = ResponseEntity.status(HttpStatus.NO_CONTENT).body(customResponse);
+                customResponse.setCode(204);
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(customResponse);
             } else {
                 customResponse.setData(ventaService.getVentas());
                 customResponse.setHttpCode(HttpStatus.OK);
                 customResponse.setMensaje("Showing all records");
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(customResponse);
-
+                customResponse.setCode(200);
+                return ResponseEntity.status(HttpStatus.OK).body(customResponse);
             }
-
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setMensaje(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
         }
-
-        return responseEntity;
     }
-        
+
     @GetMapping("/venta/{idVenta}")
     public CustomResponse getVenta(@PathVariable int idVenta) {
         CustomResponse customResponse = new CustomResponse();
