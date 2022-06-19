@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -27,8 +28,20 @@ public class VentaController {
     private VentaService ventaService;
 
     @PostMapping("/venta")
-    public CustomResponse registrarVenta(@RequestBody VentaModel venta) {
+    public ResponseEntity<Object> registrarVenta
+        (@RequestHeader(value = "Authorization", required = false) String token, 
+                @RequestBody VentaModel venta) {
+            ResponseEntity<Object> responseEntity = null;
         CustomResponse customResponse = new CustomResponse();
+        
+        if(token == null){
+            customResponse.setHttpCode(HttpStatus.UNAUTHORIZED);
+            customResponse.setCode(401);
+            customResponse.setMensaje("Favor enviar JWT en Headers como Authorization");
+            responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
+        }
+        
+        
         boolean flag = true;
         LinkedList atributes = new LinkedList();
         atributes.add("Campos que hacen falta:");
@@ -82,12 +95,15 @@ public class VentaController {
             customResponse.setMensaje("Success");
             data.add(noFolio);
             customResponse.setData(data);
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(customResponse);
         } else {
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             customResponse.setCode(422);
             customResponse.setMensaje(atributes);
         }
-        return customResponse;
+        
+        
+        return responseEntity;
     }
 
     @GetMapping("/venta")
