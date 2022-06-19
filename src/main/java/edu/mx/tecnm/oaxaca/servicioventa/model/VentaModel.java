@@ -4,8 +4,8 @@
  */
 package edu.mx.tecnm.oaxaca.servicioventa.model;
 
-import javax.validation.constraints.NotBlank;
 import javax.persistence.*;
+
 /**
  *
  * @author aleja
@@ -17,7 +17,7 @@ public class VentaModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    
+
     @Column(name = "folio")
     private String folio;
 
@@ -45,6 +45,8 @@ public class VentaModel {
     @Column(name = "rfc")
     private String rfc;
     
+    @Column(name = "idFactura")
+    private int idFactura;
 
     public VentaModel() {
     }
@@ -52,7 +54,7 @@ public class VentaModel {
     public VentaModel(Integer id, String folio, double costoTotal, 
             double cantidadPagada, double cambio, String observaciones, 
             String fecha, String estado, boolean estatusDelete, 
-            String rfc) {
+            String rfc, int idFactura) {
         this.id = id;
         this.folio = folio;
         this.costoTotal = costoTotal;
@@ -63,6 +65,7 @@ public class VentaModel {
         this.estado = estado;
         this.estatusDelete = estatusDelete;
         this.rfc = rfc;
+        this.idFactura = idFactura;
     }
 
     public Integer getId() {
@@ -145,6 +148,14 @@ public class VentaModel {
         this.rfc = rfc;
     }
 
+    public int getIdFactura() {
+        return idFactura;
+    }
+
+    public void setIdFactura(int idFactura) {
+        this.idFactura = idFactura;
+    }
+
     @Override
     public String toString() {
         return "VentaModel{" + "id=" + id + ", folio=" + 
@@ -152,7 +163,7 @@ public class VentaModel {
                 cantidadPagada + ", cambio=" + cambio + ", observaciones=" + 
                 observaciones + ", fecha=" + fecha + ", estado=" + 
                 estado + ", estatusDelete=" + estatusDelete + ", rfc=" + 
-                rfc +'}';
+                rfc + ", idFactura=" + idFactura + '}';
     }
     
     

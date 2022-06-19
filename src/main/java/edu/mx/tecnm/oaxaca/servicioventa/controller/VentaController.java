@@ -4,23 +4,14 @@
  */
 package edu.mx.tecnm.oaxaca.servicioventa.controller;
 
-import edu.mx.tecnm.oaxaca.servicioventa.autentication.Authentication;
-import edu.mx.tecnm.oaxaca.servicioventa.exceptions.ExternalMicroserviceException;
-import edu.mx.tecnm.oaxaca.servicioventa.exceptions.UnauthorizedException;
 import edu.mx.tecnm.oaxaca.servicioventa.model.VentaModel;
 import edu.mx.tecnm.oaxaca.servicioventa.service.VentaService;
 import edu.mx.tecnm.oaxaca.servicioventa.utils.CustomResponse;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -35,22 +26,54 @@ public class VentaController {
     @Autowired
     private VentaService ventaService;
 
-    @Autowired
-    private Authentication authentication;
-
     @PostMapping("/venta")
-    public ResponseEntity registrarVenta(@RequestBody VentaModel venta,
-            HttpServletRequest request) throws IOException {
-        ResponseEntity<CustomResponse> valueResponse = null;
+    public CustomResponse registrarVenta(@RequestBody VentaModel venta) {
         CustomResponse customResponse = new CustomResponse();
-        try {
-
-            authentication.auth(request);
-
+        boolean flag = true;
+        LinkedList atributes = new LinkedList();
+        atributes.add("Campos que hacen falta:");
+        if (venta.getCostoTotal() == 0.0d) {
+            atributes.add("El atributo COSTO TOTAL no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
+        if (venta.getCantidadPagada()== 0.0d) {
+            atributes.add("El atributo CANTIDAD PAGADA no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
+        if (venta.getCambio() == 0.0d) {
+            atributes.add("El atributo CAMBIO no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
+        if (venta.getObservaciones() == null) {
+            atributes.add("El atributo OBSERVACIONES no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
+        if (venta.getFecha() == null) {
+            atributes.add("El atributo FECHA no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
+        if (venta.getEstado() == null) {
+            atributes.add("El atributo ESTADI no puede ir vacío");
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            flag = false;
+        }
+        
+        if (flag == true) {
             int noFolio = getVentasLastIndex().getId();
-            String folio = "VENTA-" + (noFolio + 1);
+            String folio = "VENTA-"+(noFolio+1);
             venta.setFolio(folio);
-
+            
             ArrayList data = new ArrayList();
             data.add(folio);
             ventaService.registarVenta(venta);
@@ -59,18 +82,12 @@ public class VentaController {
             customResponse.setMensaje("Success");
             data.add(noFolio);
             customResponse.setData(data);
-            valueResponse = ResponseEntity.status(HttpStatus.CREATED).body(customResponse);
-        } catch (UnauthorizedException ex) {
-            customResponse.setData(ex.toJSON());
-            customResponse.setCode(401);
-            valueResponse = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
-        } catch (ExternalMicroserviceException ex) {
-            customResponse.setData(ex.toJSON());
-            customResponse.setCode(503);
-            valueResponse = ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(customResponse);
+        } else {
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            customResponse.setCode(422);
+            customResponse.setMensaje(atributes);
         }
-        return valueResponse;
-
+        return customResponse;
     }
 
     @GetMapping("/venta")
