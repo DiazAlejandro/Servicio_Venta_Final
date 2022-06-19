@@ -61,7 +61,11 @@ public class VentaController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                         new CustomResponse("La cantidad a pagar tiene que ser mayor al costo total", 204));
             }   
-
+            
+            if (getVentasLastIndex() == null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new CustomResponse("Sin registros", 204));
+            }
             int noFolio = getVentasLastIndex().getId();
             String folio = "VENTA-" + (noFolio + 1);
             venta.setFolio(folio);
