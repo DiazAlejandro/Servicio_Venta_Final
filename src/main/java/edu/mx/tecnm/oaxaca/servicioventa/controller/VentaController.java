@@ -4,6 +4,7 @@
  */
 package edu.mx.tecnm.oaxaca.servicioventa.controller;
 
+import edu.mx.tecnm.oaxaca.servicioventa.auth.Auth;
 import edu.mx.tecnm.oaxaca.servicioventa.model.VentaModel;
 import edu.mx.tecnm.oaxaca.servicioventa.service.VentaService;
 import edu.mx.tecnm.oaxaca.servicioventa.utils.CustomResponse;
@@ -26,7 +27,15 @@ public class VentaController {
 
     @Autowired
     private VentaService ventaService;
-
+    
+    private final Auth auth;
+    
+    @Autowired
+    public VentaController(Auth auth) {
+        this.auth = auth;
+    }
+    
+    
     @PostMapping("/venta")
     public ResponseEntity<Object> registrarVenta(@RequestHeader(value = "Authorization", required = false) String token,
             @RequestBody VentaModel venta) {
