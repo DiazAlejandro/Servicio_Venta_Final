@@ -60,25 +60,36 @@ public class VentaController {
             if (venta.getCostoTotal() > venta.getCantidadPagada()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                         new CustomResponse("La cantidad a pagar tiene que ser mayor al costo total", 204));
-            }   
-            
-            if (getVentasLastIndex() == null){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        new CustomResponse("Sin registros", 204));
             }
-            int noFolio = getVentasLastIndex().getId();
-            String folio = "VENTA-" + (noFolio + 1);
-            venta.setFolio(folio);
 
-            ArrayList data = new ArrayList();
-            data.add(folio);
-            ventaService.registarVenta(venta);
-            customResponse.setHttpCode(HttpStatus.CREATED);
-            customResponse.setCode(201);
-            customResponse.setMensaje("Success");
-            data.add(noFolio);
-            customResponse.setData(data);
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(customResponse);
+            if (getVentasLastIndex() == null) {
+                String folio = "VENTA-1";
+                ArrayList data = new ArrayList();
+
+                venta.setFolio(folio);
+                data.add(folio);
+                ventaService.registarVenta(venta);
+                customResponse.setHttpCode(HttpStatus.CREATED);
+                customResponse.setCode(201);
+                customResponse.setMensaje("Success");
+                data.add(0);
+                customResponse.setData(data);
+                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(customResponse);
+            } else {
+                int noFolio = getVentasLastIndex().getId();
+                String folio = "VENTA-" + (noFolio + 1);
+                venta.setFolio(folio);
+
+                ArrayList data = new ArrayList();
+                data.add(folio);
+                ventaService.registarVenta(venta);
+                customResponse.setHttpCode(HttpStatus.CREATED);
+                customResponse.setCode(201);
+                customResponse.setMensaje("Success");
+                data.add(noFolio);
+                customResponse.setData(data);
+                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(customResponse);
+            }
 
         } catch (Exception e) {
             customResponse.setMensaje(e.getMessage());
