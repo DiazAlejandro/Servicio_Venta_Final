@@ -175,6 +175,11 @@ public class VentaController {
                 customResponse.setMensaje("Showing all matches");
                 return ResponseEntity.status(HttpStatus.OK).body(customResponse);
             }
+        } catch (HttpClientErrorException e) {
+            customResponse.setMensaje("JWT invalid or expired");
+            customResponse.setCode(422);
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
         } catch (Exception e) {
             customResponse.setMensaje(e.getMessage());
             customResponse.setCode(422);
