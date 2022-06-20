@@ -14,9 +14,11 @@ import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 /**
  *
@@ -61,36 +63,38 @@ public class VentaController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                         new CustomResponse("La cantidad a pagar tiene que ser mayor al costo total", 204));
             }
-
-            if (getVentasLastIndex() == null) {
-                String folio = "VENTA-1";
-                ArrayList data = new ArrayList();
-
-                venta.setFolio(folio);
-                data.add(folio);
-                ventaService.registarVenta(venta);
-                customResponse.setHttpCode(HttpStatus.CREATED);
-                customResponse.setCode(201);
-                customResponse.setMensaje("Success");
-                data.add(0);
-                customResponse.setData(data);
-                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(customResponse);
-            } else {
-                int noFolio = getVentasLastIndex().getId();
-                String folio = "VENTA-" + (noFolio + 1);
-                venta.setFolio(folio);
-
-                ArrayList data = new ArrayList();
-                data.add(folio);
-                ventaService.registarVenta(venta);
-                customResponse.setHttpCode(HttpStatus.CREATED);
-                customResponse.setCode(201);
-                customResponse.setMensaje("Success");
-                data.add(noFolio);
-                customResponse.setData(data);
-                responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(customResponse);
+            if (venta.getCambio() > venta.getCantidadPagada()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new CustomResponse("El cambio no puede ser mayor que la cantidad pagada", 204));
             }
 
+            String folio = "";
+            ArrayList data = new ArrayList();
+            int noFolio;
+
+            if (getVentasLastIndex() == null) {
+                noFolio = 0;
+                folio = "VENTA-1";
+            } else {
+                noFolio = getVentasLastIndex().getId();
+                folio = "VENTA-" + (noFolio + 1);
+            }
+            venta.setFolio(folio);
+            data.add(folio);
+            ventaService.registarVenta(venta);
+            customResponse.setHttpCode(HttpStatus.CREATED);
+            customResponse.setCode(201);
+            customResponse.setMensaje("Success");
+            data.add(noFolio);
+            customResponse.setData(data);
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(customResponse);
+
+        } catch(DataIntegrityViolationException e){
+            customResponse.setMensaje("Error with ID");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
+        } catch (HttpClientErrorException e){
+            customResponse.setMensaje("JWT invalid or expired");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
         } catch (Exception e) {
             customResponse.setMensaje(e.getMessage());
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
