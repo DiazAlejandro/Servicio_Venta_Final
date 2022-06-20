@@ -31,9 +31,13 @@ public class CustomResponse {
         this.mensaje = mensaje;
         this.code = code;
     }
-    
-    
 
+    public CustomResponse(HttpStatus httpCode, Object mensaje, int code) {
+        this.httpCode = httpCode;
+        this.mensaje = mensaje;
+        this.code = code;
+    }
+    
     public CustomResponse() {
     }
 
