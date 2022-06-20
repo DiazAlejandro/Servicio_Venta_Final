@@ -155,6 +155,10 @@ public class VentaController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                         new CustomResponse("JWT invalid or expired", 401));
             }
+            if (!(idVenta+"").matches("-?\\d+")){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new CustomResponse("Param can not be a strrng", 400));
+            }
 
             if (ventaService.getVenta(idVenta) == null) {
                 return ResponseEntity.status(HttpStatus.OK).body(
@@ -170,10 +174,6 @@ public class VentaController {
                     new CustomResponse(HttpStatus.UNPROCESSABLE_ENTITY,
                             "JWT invalid or expired", 422)
             );
-        } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    new CustomResponse(HttpStatus.BAD_REQUEST,
-                            "Param can not be a strrng", 400));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
                     new CustomResponse(HttpStatus.UNPROCESSABLE_ENTITY, 
