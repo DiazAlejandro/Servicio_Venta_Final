@@ -170,7 +170,7 @@ public class VentaController {
                 customResponse.setHttpCode(HttpStatus.NO_CONTENT);
                 customResponse.setCode(204);
                 customResponse.setMensaje("Not found Ventas with id = " + idVenta);
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(customResponse);
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("SIN COINDICENCIAS");
             } else {
                 customResponse.setData(ventaService.getVenta(idVenta));
                 customResponse.setHttpCode(HttpStatus.OK);
