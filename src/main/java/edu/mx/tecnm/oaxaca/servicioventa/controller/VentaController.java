@@ -136,27 +136,59 @@ public class VentaController {
             }
         } catch (HttpClientErrorException e){
             customResponse.setMensaje("JWT invalid or expired");
+            customResponse.setCode(422);
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
         } catch (Exception e) {
             customResponse.setMensaje(e.getMessage());
+            customResponse.setCode(422);
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
         }
     }
 
     @GetMapping("/venta/{idVenta}")
-    public CustomResponse getVenta(@PathVariable int idVenta) {
+    public ResponseEntity<Object> getVenta(
+            @RequestHeader(value = "Authorization", required = false) String authorization, 
+            @PathVariable int idVenta) {
+        
+        ResponseEntity<Object> responseEntity = null;
         CustomResponse customResponse = new CustomResponse();
-        if (ventaService.getVenta(idVenta) == null) {
-            customResponse.setHttpCode(HttpStatus.NO_CONTENT);
-            customResponse.setCode(204);
-            customResponse.setMensaje("Not found Ventas with id = " + idVenta);
-        } else {
-            customResponse.setData(ventaService.getVenta(idVenta));
-            customResponse.setHttpCode(HttpStatus.OK);
-            customResponse.setCode(200);
-            customResponse.setMensaje("Showing all matches");
+        
+        try {
+            if (authorization == null) {
+                customResponse.setHttpCode(HttpStatus.UNAUTHORIZED);
+                customResponse.setCode(401);
+                customResponse.setMensaje("Please, send a JWT Headers like Authorization");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
+            }
+            if (!auth.verifyToken(authorization)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse("JWT invalid or expired", 401));
+            }
+            if (ventaService.getVenta(idVenta) == null) {
+                customResponse.setHttpCode(HttpStatus.NO_CONTENT);
+                customResponse.setCode(204);
+                customResponse.setMensaje("Not found Ventas with id = " + idVenta);
+            } else {
+                customResponse.setData(ventaService.getVenta(idVenta));
+                customResponse.setHttpCode(HttpStatus.OK);
+                customResponse.setCode(200);
+                customResponse.setMensaje("Showing all matches");
+            }
+        } catch (HttpClientErrorException e){
+            customResponse.setMensaje("JWT invalid or expired");
+            customResponse.setCode(422);
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
+        } catch (Exception e) {
+            customResponse.setMensaje(e.getMessage());
+            customResponse.setCode(422);
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
         }
-        return customResponse;
+        
+        return responseEntity;
     }
 
     @PutMapping("/venta/{idVenta}")
