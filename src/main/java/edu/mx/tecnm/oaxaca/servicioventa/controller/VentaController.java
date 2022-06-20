@@ -148,19 +148,30 @@ public class VentaController {
     }
 
     @GetMapping("/venta/{idVenta}")
-    public CustomResponse getVenta(@PathVariable int idVenta) {
+    public ResponseEntity<Object> getVentas(@RequestHeader(value = "Authorization", required = false) String authorization, @PathVariable int idVenta) {
+        ResponseEntity<Object> responseEntity = null;
         CustomResponse customResponse = new CustomResponse();
-        if (ventaService.getVenta(idVenta) == null) {
-            customResponse.setHttpCode(HttpStatus.NO_CONTENT);
-            customResponse.setCode(204);
-            customResponse.setMensaje("Not found Ventas with id = " + idVenta);
-        } else {
-            customResponse.setData(ventaService.getVenta(idVenta));
-            customResponse.setHttpCode(HttpStatus.OK);
-            customResponse.setCode(200);
-            customResponse.setMensaje("Showing all matches");
+        try {
+            if (ventaService.getVenta(idVenta) == null) {
+                customResponse.setHttpCode(HttpStatus.NO_CONTENT);
+                customResponse.setCode(204);
+                customResponse.setMensaje("Not found Ventas with id = " + idVenta);
+                return ResponseEntity.status(HttpStatus.OK).body(customResponse);
+
+            } else {
+                customResponse.setData(ventaService.getVenta(idVenta));
+                customResponse.setHttpCode(HttpStatus.OK);
+                customResponse.setCode(200);
+                customResponse.setMensaje("Showing all matches");
+                return ResponseEntity.status(HttpStatus.OK).body(customResponse);
+            }
+        } catch (Exception e) {
+            customResponse.setMensaje(e.getMessage());
+            customResponse.setCode(422);
+            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
+
         }
-        return customResponse;
     }
 
     @PutMapping("/venta/{idVenta}")
