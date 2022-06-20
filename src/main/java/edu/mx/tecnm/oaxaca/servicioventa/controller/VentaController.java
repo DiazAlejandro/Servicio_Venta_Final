@@ -55,7 +55,7 @@ public class VentaController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                         new CustomResponse("JWT invalid or expired", 401));
             }
-            if ((venta.getCambio()+"").isEmpty()) {
+            if ((venta.getCambio() + "").isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                         new CustomResponse("Process invalid", 204));
             }
@@ -93,10 +93,10 @@ public class VentaController {
             customResponse.setData(data);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(customResponse);
 
-        } catch(DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             customResponse.setMensaje("Error with ID");
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
-        } catch (HttpClientErrorException e){
+        } catch (HttpClientErrorException e) {
             customResponse.setMensaje("JWT invalid or expired");
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
         } catch (Exception e) {
@@ -134,7 +134,7 @@ public class VentaController {
                 customResponse.setCode(200);
                 return ResponseEntity.status(HttpStatus.OK).body(customResponse);
             }
-        } catch (HttpClientErrorException e){
+        } catch (HttpClientErrorException e) {
             customResponse.setMensaje("JWT invalid or expired");
             customResponse.setCode(422);
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -149,12 +149,12 @@ public class VentaController {
 
     @GetMapping("/venta/{idVenta}")
     public ResponseEntity<Object> getVenta(
-            @RequestHeader(value = "Authorization", required = false) String authorization, 
+            @RequestHeader(value = "Authorization", required = false) String authorization,
             @PathVariable int idVenta) {
-        
+
         ResponseEntity<Object> responseEntity = null;
         CustomResponse customResponse = new CustomResponse();
-        
+
         try {
             if (authorization == null) {
                 customResponse.setHttpCode(HttpStatus.UNAUTHORIZED);
@@ -178,7 +178,7 @@ public class VentaController {
                 customResponse.setMensaje("Showing all matches");
                 return ResponseEntity.status(HttpStatus.OK).body(customResponse);
             }
-        } catch (HttpClientErrorException e){
+        } catch (HttpClientErrorException e) {
             customResponse.setMensaje("JWT invalid or expired");
             customResponse.setCode(422);
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -189,8 +189,6 @@ public class VentaController {
             customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
         }
-        
-        return responseEntity;
     }
 
     @PutMapping("/venta/{idVenta}")
