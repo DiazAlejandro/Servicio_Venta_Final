@@ -55,21 +55,21 @@ public class VentaController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                         new CustomResponse("JWT invalid or expired", 401));
             }
-            if (venta == null) {
+            if ((venta.getCambio()+"").isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                         new CustomResponse("Process invalid", 204));
             }
             if (venta.getCostoTotal() > venta.getCantidadPagada()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        new CustomResponse("La cantidad a pagar tiene que ser mayor al costo total", 204));
+                        new CustomResponse("La cantidad a pagar tiene que ser mayor al costo total", 400));
             }
             if (venta.getCambio() > venta.getCantidadPagada()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        new CustomResponse("El cambio no puede ser mayor que la cantidad pagada", 204));
+                        new CustomResponse("El cambio no puede ser mayor que la cantidad pagada", 400));
             }
             if (!(venta.getRfc().length() == 13)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        new CustomResponse("La longitud del RFC tiene que ser 13", 204));
+                        new CustomResponse("La longitud del RFC tiene que ser 13", 400));
             }
 
             String folio = "";
@@ -117,6 +117,10 @@ public class VentaController {
                 customResponse.setCode(401);
                 customResponse.setMensaje("Please, send a JWT Headers like Authorization");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
+            }
+            if (!auth.verifyToken(authorization)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse("JWT invalid or expired", 401));
             }
             if (ventaService.getVentas().isEmpty()) {
                 customResponse.setHttpCode(HttpStatus.NO_CONTENT);
