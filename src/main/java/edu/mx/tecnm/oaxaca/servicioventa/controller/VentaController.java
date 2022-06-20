@@ -167,10 +167,11 @@ public class VentaController {
                         new CustomResponse("JWT invalid or expired", 401));
             }
             if (ventaService.getVenta(idVenta) == null) {
+                customResponse.setData(ventaService.getVenta(idVenta));
                 customResponse.setHttpCode(HttpStatus.NO_CONTENT);
                 customResponse.setCode(204);
                 customResponse.setMensaje("Not found Ventas with id = " + idVenta);
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("SIN COINDICENCIAS");
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(customResponse);
             } else {
                 customResponse.setData(ventaService.getVenta(idVenta));
                 customResponse.setHttpCode(HttpStatus.OK);
