@@ -26,14 +26,19 @@ public class CustomResponse {
     }
 
     public CustomResponse(Object mensaje, int code) {
-        this.httpCode = httpCode;
-        this.data = data;
         this.mensaje = mensaje;
         this.code = code;
     }
 
     public CustomResponse(HttpStatus httpCode, Object mensaje, int code) {
         this.httpCode = httpCode;
+        this.mensaje = mensaje;
+        this.code = code;
+    }
+
+    public CustomResponse(HttpStatus httpCode, Object data, Object mensaje, int code) {
+        this.httpCode = httpCode;
+        this.data = data;
         this.mensaje = mensaje;
         this.code = code;
     }
