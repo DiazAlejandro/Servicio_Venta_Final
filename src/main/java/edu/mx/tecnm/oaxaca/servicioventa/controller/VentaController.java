@@ -67,6 +67,10 @@ public class VentaController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                         new CustomResponse("El cambio no puede ser mayor que la cantidad pagada", 204));
             }
+            if (!(venta.getRfc().length() == 13)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new CustomResponse("La longitud del RFC tiene que ser 13", 204));
+            }
 
             String folio = "";
             ArrayList data = new ArrayList();
