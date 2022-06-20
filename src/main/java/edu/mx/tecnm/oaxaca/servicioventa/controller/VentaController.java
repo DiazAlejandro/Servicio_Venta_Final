@@ -152,6 +152,16 @@ public class VentaController {
         ResponseEntity<Object> responseEntity = null;
         CustomResponse customResponse = new CustomResponse();
         try {
+            if (authorization == null) {
+                customResponse.setHttpCode(HttpStatus.UNAUTHORIZED);
+                customResponse.setCode(401);
+                customResponse.setMensaje("Please, send a JWT Headers like Authorization");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(customResponse);
+            }
+            if (!auth.verifyToken(authorization)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse("JWT invalid or expired", 401));
+            }
             if (ventaService.getVenta(idVenta) == null) {
                 customResponse.setHttpCode(HttpStatus.NO_CONTENT);
                 customResponse.setCode(204);
