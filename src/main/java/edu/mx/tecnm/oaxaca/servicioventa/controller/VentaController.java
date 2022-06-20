@@ -170,11 +170,13 @@ public class VentaController {
                 customResponse.setHttpCode(HttpStatus.NO_CONTENT);
                 customResponse.setCode(204);
                 customResponse.setMensaje("Not found Ventas with id = " + idVenta);
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(customResponse);
             } else {
                 customResponse.setData(ventaService.getVenta(idVenta));
                 customResponse.setHttpCode(HttpStatus.OK);
                 customResponse.setCode(200);
                 customResponse.setMensaje("Showing all matches");
+                return ResponseEntity.status(HttpStatus.OK).body(customResponse);
             }
         } catch (HttpClientErrorException e){
             customResponse.setMensaje("JWT invalid or expired");
