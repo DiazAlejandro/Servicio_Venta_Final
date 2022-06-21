@@ -69,6 +69,7 @@ public class VentaController {
                         new CustomResponse(HttpStatus.BAD_REQUEST, 
                                 "La cantidad a pagar tiene que ser mayor al costo total", 400));
             }
+            
             if (venta.getCambio() > venta.getCantidadPagada()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                         new CustomResponse("El cambio no puede ser mayor que la cantidad pagada", 400));
