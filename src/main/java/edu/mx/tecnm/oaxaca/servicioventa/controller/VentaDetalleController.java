@@ -4,6 +4,7 @@
  */
 package edu.mx.tecnm.oaxaca.servicioventa.controller;
 
+import edu.mx.tecnm.oaxaca.servicioventa.auth.Auth;
 import edu.mx.tecnm.oaxaca.servicioventa.model.VentaDetalleModel;
 import edu.mx.tecnm.oaxaca.servicioventa.model.VentaModel;
 import edu.mx.tecnm.oaxaca.servicioventa.repository.VentaDetalleRepository;
@@ -13,9 +14,12 @@ import edu.mx.tecnm.oaxaca.servicioventa.service.VentaService;
 import edu.mx.tecnm.oaxaca.servicioventa.utils.CustomResponse;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 /**
  *
@@ -35,39 +39,91 @@ public class VentaDetalleController {
     @Autowired
     private VentaDetalleRepository ventaDetalleRepository;
 
+    @Autowired
+    private Auth auth;
+
     @PostMapping("/venta/{idVenta}/ventadetalle")
-    public CustomResponse registrarVentaDetalle(@PathVariable Integer idVenta,
-            @RequestBody VentaDetalleModel ventaDetalle) {
+    public ResponseEntity<Object> registrarVentaDetalle(
+            @RequestHeader(value = "Authorization", required = false) String authorization,
+            @PathVariable Integer idVenta, @RequestBody VentaDetalleModel ventaDetalle) {
         CustomResponse customResponse = new CustomResponse();
-        VentaModel ventaModel = ventaService.getVenta(idVenta);
-        if (ventaModel != null) {
-            ventaDetalle.setVenta(ventaModel);
-            ventaDetalleService.registarVentaDetalle(ventaDetalle);
-            customResponse.setHttpCode(HttpStatus.CREATED);
-            customResponse.setMensaje("Successful");
-            customResponse.setData(idVenta);
-        } else {
-            customResponse.setMensaje("There isn't a sale with the id " + idVenta);
-            customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+        ResponseEntity<Object> responseEntity = null;
+        try {
+            if (authorization == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse(HttpStatus.UNAUTHORIZED,
+                                "Please, send a JWT Headers like Authorization",
+                                401));
+            }
+            if (!auth.verifyToken(authorization)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse("JWT invalid or expired", 401));
+            }
+            VentaModel ventaModel = ventaService.getVenta(idVenta);
+            if (ventaModel != null) {
+                ventaDetalle.setVenta(ventaModel);
+                ventaDetalleService.registarVentaDetalle(ventaDetalle);
+                return ResponseEntity.status(HttpStatus.CREATED).body(new CustomResponse(HttpStatus.CREATED, "Success", 201));
+            } else {
+                customResponse.setMensaje("There isn't a sale with the id " + idVenta);
+                customResponse.setHttpCode(HttpStatus.UNPROCESSABLE_ENTITY);
+                return ResponseEntity.status(HttpStatus.CREATED).body(
+                        new CustomResponse(HttpStatus.UNPROCESSABLE_ENTITY, 
+                                "There isn't a sale with the id " + idVenta,422));
+            }
+
+        } catch (DataIntegrityViolationException e) {
+            customResponse.setMensaje("Error with ID");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
+        } catch (HttpClientErrorException e) {
+            customResponse.setMensaje("JWT invalid or expired");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
+        } catch (Exception e) {
+            customResponse.setMensaje(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
         }
-        return customResponse;
     }
 
     @GetMapping("/venta/{idVenta}/ventadetalle")
-    public CustomResponse getVentaDetalle(@PathVariable int idVenta) {
+    public ResponseEntity<Object> getVentaDetalle(@RequestHeader(value = "Authorization", required = false) String authorization, @PathVariable int idVenta) {
+        ResponseEntity<Object> responseEntity = null;
         CustomResponse customResponse = new CustomResponse();
-        List<VentaDetalleModel> detalles = ventaDetalleRepository.findByVentaId(idVenta);
-        if (detalles.isEmpty()) {
-            customResponse.setData(detalles);
-            customResponse.setHttpCode(HttpStatus.NO_CONTENT);
-            customResponse.setMensaje("Not found Detalles in this table with idVenta " + idVenta);
-        } else {
-            customResponse.setData(detalles);
-            customResponse.setHttpCode(HttpStatus.OK);
-            customResponse.setMensaje("Showing all records");
+        try {
+            if (authorization == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse(HttpStatus.UNAUTHORIZED,
+                                "Please, send a JWT Headers like Authorization", 401));
+            }
+            if (!auth.verifyToken(authorization)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse("JWT invalid or expired", 401));
+            }
+            if (!(idVenta + "").matches("-?\\d+")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new CustomResponse("Param can not be a strrng", 400));
+            }
+
+            List<VentaDetalleModel> detalles = ventaDetalleRepository.findByVentaId(idVenta);
+            if (detalles.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new CustomResponse(HttpStatus.NO_CONTENT, detalles,
+                                "\"Not found Detalles in this table with idVenta" + idVenta, 204));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new CustomResponse(HttpStatus.OK, detalles, "Showing all matches", 200));
+            }
+
+        } catch (HttpClientErrorException e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new CustomResponse(HttpStatus.UNPROCESSABLE_ENTITY,
+                            "JWT invalid or expired", 422)
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new CustomResponse(HttpStatus.UNPROCESSABLE_ENTITY,
+                            e.getMessage().toString(), 422));
         }
 
-        return customResponse;
     }
 
     @GetMapping("/ventadetalle")
