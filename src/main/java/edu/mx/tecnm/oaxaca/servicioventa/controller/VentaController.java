@@ -235,7 +235,7 @@ public class VentaController {
             }
                 ventaService.updateVenta(venta, idVenta);
                 customResponse.setHttpCode(HttpStatus.OK);
-                customResponse.setCode(204);
+                customResponse.setCode(200);
                 customResponse.setMensaje("Update Success");
                 return ResponseEntity.status(HttpStatus.OK).body(customResponse);
                         
@@ -363,18 +363,66 @@ public class VentaController {
     }
 
     @PutMapping("/venta/folio/{folio}")
-    public CustomResponse updateVentaByFolio(@RequestBody VentaModel venta, @PathVariable String folio) {
+    public ResponseEntity<Object> updateVentaByFolio(@RequestHeader(value = "Authorization", required = false) String authorization,
+            @RequestBody VentaModel venta, @PathVariable String folio) {
+        ResponseEntity<Object> responseEntity = null;
         CustomResponse customResponse = new CustomResponse();
-        VentaModel venta_model = ventaService.getVentaByFolio(folio);
-        if (venta_model == null) {
-            customResponse.setHttpCode(HttpStatus.NOT_ACCEPTABLE);
-            customResponse.setMensaje("This acction can't execute, Not found Ventas with folio = " + folio);
-        } else {
-            ventaService.updateVenta(venta, venta_model.getId());
-            customResponse.setHttpCode(HttpStatus.ACCEPTED);
-            customResponse.setMensaje("Update success");
+
+        try {
+            if (authorization == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse(HttpStatus.UNAUTHORIZED,
+                                "Please, send a JWT Headers like Authorization",
+                                401));
+            }
+            if (!auth.verifyToken(authorization)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse("JWT invalid or expired", 401));
+            }
+            if ((venta.getCambio() + "").isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
+                        new CustomResponse("Process invalid", 204));
+            }
+            if ((venta.getCantidadPagada() - venta.getCostoTotal()) < venta.getCambio()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new CustomResponse(HttpStatus.BAD_REQUEST,
+                                "El cambio no puede ser mayor que la cantidad pagada menos el costo total", 204));
+            }
+            if (venta.getCostoTotal() > venta.getCantidadPagada()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new CustomResponse(HttpStatus.BAD_REQUEST,
+                                "La cantidad a pagar tiene que ser mayor al costo total", 400));
+            }
+            if (venta.getCambio() > venta.getCantidadPagada()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new CustomResponse("El cambio no puede ser mayor que la cantidad pagada", 400));
+            }
+            if (!(venta.getRfc().length() == 13)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new CustomResponse("La longitud del RFC tiene que ser 13", 400));
+            }
+            
+            if (ventaService.getVentaByFolio(folio) == null) {
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
+                        new CustomResponse(HttpStatus.NOT_ACCEPTABLE, 
+                                "This acction can't execute, Not found Ventas with folio = "+folio, 406 ));
+            }
+                ventaService.updateVenta(venta, ventaService.getVentaByFolio(folio).getId());
+                customResponse.setHttpCode(HttpStatus.OK);
+                customResponse.setCode(204);
+                customResponse.setMensaje("Update Success");
+                return ResponseEntity.status(HttpStatus.OK).body(customResponse);
+                        
+        } catch (DataIntegrityViolationException e) {
+            customResponse.setMensaje("Error with ID");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
+        } catch (HttpClientErrorException e) {
+            customResponse.setMensaje("JWT invalid or expired");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
+        } catch (Exception e) {
+            customResponse.setMensaje(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
         }
-        return customResponse;
     }
 
     public VentaModel getVentasLastIndex() {
