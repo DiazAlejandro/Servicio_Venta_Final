@@ -227,18 +227,19 @@ public class VentaController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                         new CustomResponse("La longitud del RFC tiene que ser 13", 400));
             }
+            
             VentaModel venta_model = ventaService.getVenta(idVenta);
             if (venta_model == null) {
                 return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
-                        new CustomResponse(HttpStatus.NOT_ACCEPTABLE, "This acction can't execute, Not found Ventas with id = ", idVenta));
-            }else{
+                        new CustomResponse(HttpStatus.NOT_ACCEPTABLE, 
+                                "This acction can't execute, Not found Ventas with id = "+idVenta, 406 ));
+            }
                 ventaService.updateVenta(venta, idVenta);
                 customResponse.setHttpCode(HttpStatus.OK);
                 customResponse.setCode(204);
                 customResponse.setMensaje("Update Success");
                 return ResponseEntity.status(HttpStatus.OK).body(customResponse);
-            }
-            
+                        
         } catch (DataIntegrityViolationException e) {
             customResponse.setMensaje("Error with ID");
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
