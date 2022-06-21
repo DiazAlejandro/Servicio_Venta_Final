@@ -59,9 +59,15 @@ public class VentaController {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                         new CustomResponse("Process invalid", 204));
             }
+            if ((venta.getCantidadPagada() - venta.getCostoTotal()) < venta.getCambio()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new CustomResponse(HttpStatus.BAD_REQUEST, 
+                                "El cambio no puede ser mayor que la cantidad pagada menos el costo total", 204));
+            }
             if (venta.getCostoTotal() > venta.getCantidadPagada()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        new CustomResponse("La cantidad a pagar tiene que ser mayor al costo total", 400));
+                        new CustomResponse(HttpStatus.BAD_REQUEST, 
+                                "La cantidad a pagar tiene que ser mayor al costo total", 400));
             }
             if (venta.getCambio() > venta.getCantidadPagada()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -202,9 +208,15 @@ public class VentaController {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                         new CustomResponse("Process invalid", 204));
             }
+            if ((venta.getCantidadPagada() - venta.getCostoTotal()) < venta.getCambio()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        new CustomResponse(HttpStatus.BAD_REQUEST, 
+                                "El cambio no puede ser mayor que la cantidad pagada menos el costo total", 204));
+            }
             if (venta.getCostoTotal() > venta.getCantidadPagada()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        new CustomResponse("La cantidad a pagar tiene que ser mayor al costo total", 400));
+                        new CustomResponse(HttpStatus.BAD_REQUEST, 
+                                "La cantidad a pagar tiene que ser mayor al costo total", 400));
             }
             if (venta.getCambio() > venta.getCantidadPagada()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
