@@ -283,20 +283,39 @@ public class VentaController {
     }
 
     @GetMapping("/venta/folio/{folio}")
-    public CustomResponse getVentaFolio(@PathVariable String folio) {
+    public ResponseEntity<Object> getVentaFolio(@RequestHeader(value = "Authorization", required = false) String authorization,
+            @PathVariable String folio) {
+        ResponseEntity<Object> responseEntity = null;
         CustomResponse customResponse = new CustomResponse();
-        if (ventaService.getVentaByFolio(folio) == null) {
-            customResponse.setHttpCode(HttpStatus.NO_CONTENT);
-            customResponse.setCode(204);
-            customResponse.setMensaje("Not found Ventas with folio = " + folio);
-            customResponse.setData(ventaService.getVentaByFolio(folio));
-        } else {
-            customResponse.setHttpCode(HttpStatus.OK);
-            customResponse.setCode(200);
-            customResponse.setMensaje("Show all matches with folio = " + folio);
-            customResponse.setData(ventaService.getVentaByFolio(folio));
+        try {
+            if (authorization == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse(HttpStatus.UNAUTHORIZED,
+                                "Please, send a JWT Headers like Authorization", 401));
+            }
+            if (!auth.verifyToken(authorization)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse("JWT invalid or expired", 401));
+            }
+            if (ventaService.getVentaByFolio(folio) == null) {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new CustomResponse(HttpStatus.NO_CONTENT,
+                                "Not found Ventas with folio = " + folio, 204));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new CustomResponse(HttpStatus.OK, ventaService.getVentaByFolio(folio), "Showing all matches", 200));
+            }
+
+        } catch (HttpClientErrorException e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new CustomResponse(HttpStatus.UNPROCESSABLE_ENTITY,
+                            "JWT invalid or expired", 422)
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                    new CustomResponse(HttpStatus.UNPROCESSABLE_ENTITY,
+                            e.getMessage().toString(), 422));
         }
-        return customResponse;
     }
 
     @DeleteMapping("/venta/folio/{folio}")
