@@ -61,15 +61,15 @@ public class VentaController {
             }
             if ((venta.getCantidadPagada() - venta.getCostoTotal()) < venta.getCambio()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        new CustomResponse(HttpStatus.BAD_REQUEST, 
+                        new CustomResponse(HttpStatus.BAD_REQUEST,
                                 "El cambio no puede ser mayor que la cantidad pagada menos el costo total", 204));
             }
             if (venta.getCostoTotal() > venta.getCantidadPagada()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        new CustomResponse(HttpStatus.BAD_REQUEST, 
+                        new CustomResponse(HttpStatus.BAD_REQUEST,
                                 "La cantidad a pagar tiene que ser mayor al costo total", 400));
             }
-            
+
             if (venta.getCambio() > venta.getCantidadPagada()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                         new CustomResponse("El cambio no puede ser mayor que la cantidad pagada", 400));
@@ -211,12 +211,12 @@ public class VentaController {
             }
             if ((venta.getCantidadPagada() - venta.getCostoTotal()) < venta.getCambio()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        new CustomResponse(HttpStatus.BAD_REQUEST, 
+                        new CustomResponse(HttpStatus.BAD_REQUEST,
                                 "El cambio no puede ser mayor que la cantidad pagada menos el costo total", 204));
             }
             if (venta.getCostoTotal() > venta.getCantidadPagada()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                        new CustomResponse(HttpStatus.BAD_REQUEST, 
+                        new CustomResponse(HttpStatus.BAD_REQUEST,
                                 "La cantidad a pagar tiene que ser mayor al costo total", 400));
             }
             if (venta.getCambio() > venta.getCantidadPagada()) {
@@ -245,7 +245,7 @@ public class VentaController {
     }
 
     @DeleteMapping("/venta/{idVenta}")
-    public ResponseEntity<Object> deleteCuenta(@RequestHeader(value = "Authorization", required = false) String authorization, 
+    public ResponseEntity<Object> deleteCuenta(@RequestHeader(value = "Authorization", required = false) String authorization,
             @PathVariable Integer idVenta) {
         CustomResponse customResponse = new CustomResponse();
         ResponseEntity<Object> responseEntity = null;
@@ -260,11 +260,16 @@ public class VentaController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                         new CustomResponse("JWT invalid or expired", 401));
             }
-            
-            ventaService.deleteVenta(idVenta);
-        customResponse.setHttpCode(HttpStatus.NO_CONTENT);
-        customResponse.setMensaje("Delete success");
-            return ResponseEntity.status(HttpStatus.OK).body(customResponse);
+            if (ventaService.getVenta(idVenta) == null) {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new CustomResponse(HttpStatus.NO_CONTENT,
+                                "Not found Ventas with id = " + idVenta, 204));
+            } else {
+                ventaService.deleteVenta(idVenta);
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new CustomResponse(HttpStatus.OK, "Delete success", 200));
+            }
+
         } catch (DataIntegrityViolationException e) {
             customResponse.setMensaje("Error with ID");
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
