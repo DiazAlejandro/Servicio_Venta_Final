@@ -228,9 +228,10 @@ public class VentaController {
                         new CustomResponse("La longitud del RFC tiene que ser 13", 400));
             }
             ventaService.updateVenta(venta, idVenta);
-            customResponse.setHttpCode(HttpStatus.NO_CONTENT);
+            customResponse.setHttpCode(HttpStatus.OK);
             customResponse.setCode(204);
             customResponse.setMensaje("Update Success");
+            return ResponseEntity.status(HttpStatus.OK).body(customResponse);
         } catch (DataIntegrityViolationException e) {
             customResponse.setMensaje("Error with ID");
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
@@ -241,7 +242,6 @@ public class VentaController {
             customResponse.setMensaje(e.getMessage());
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
         }
-        return responseEntity;
     }
 
     @DeleteMapping("/venta/{idVenta}")
