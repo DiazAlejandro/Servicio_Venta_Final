@@ -245,12 +245,36 @@ public class VentaController {
     }
 
     @DeleteMapping("/venta/{idVenta}")
-    public CustomResponse deleteCuenta(@PathVariable Integer idVenta) {
+    public ResponseEntity<Object> deleteCuenta(@RequestHeader(value = "Authorization", required = false) String authorization, 
+            @PathVariable Integer idVenta) {
         CustomResponse customResponse = new CustomResponse();
-        ventaService.deleteVenta(idVenta);
+        ResponseEntity<Object> responseEntity = null;
+        try {
+            if (authorization == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse(HttpStatus.UNAUTHORIZED,
+                                "Please, send a JWT Headers like Authorization",
+                                401));
+            }
+            if (!auth.verifyToken(authorization)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse("JWT invalid or expired", 401));
+            }
+            
+            ventaService.deleteVenta(idVenta);
         customResponse.setHttpCode(HttpStatus.NO_CONTENT);
         customResponse.setMensaje("Delete success");
-        return customResponse;
+            return ResponseEntity.status(HttpStatus.OK).body(customResponse);
+        } catch (DataIntegrityViolationException e) {
+            customResponse.setMensaje("Error with ID");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
+        } catch (HttpClientErrorException e) {
+            customResponse.setMensaje("JWT invalid or expired");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
+        } catch (Exception e) {
+            customResponse.setMensaje(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
+        }
     }
 
     @GetMapping("/venta/folio/{folio}")
