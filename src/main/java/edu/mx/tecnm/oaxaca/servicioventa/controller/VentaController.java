@@ -228,8 +228,7 @@ public class VentaController {
                         new CustomResponse("La longitud del RFC tiene que ser 13", 400));
             }
             
-            VentaModel venta_model = ventaService.getVenta(idVenta);
-            if (venta_model == null) {
+            if (ventaService.getVenta(idVenta) == null) {
                 return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
                         new CustomResponse(HttpStatus.NOT_ACCEPTABLE, 
                                 "This acction can't execute, Not found Ventas with id = "+idVenta, 406 ));
