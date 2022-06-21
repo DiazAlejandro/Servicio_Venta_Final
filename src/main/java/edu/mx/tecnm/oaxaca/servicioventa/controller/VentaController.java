@@ -285,8 +285,6 @@ public class VentaController {
     @GetMapping("/venta/folio/{folio}")
     public ResponseEntity<Object> getVentaFolio(@RequestHeader(value = "Authorization", required = false) String authorization,
             @PathVariable String folio) {
-        ResponseEntity<Object> responseEntity = null;
-        CustomResponse customResponse = new CustomResponse();
         try {
             if (authorization == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
@@ -319,19 +317,42 @@ public class VentaController {
     }
 
     @DeleteMapping("/venta/folio/{folio}")
-    public CustomResponse deleteVentaByFolio(@PathVariable String folio) {
+    public ResponseEntity<Object> deleteVentaByFolio(@RequestHeader(value = "Authorization", required = false) String authorization,
+            @PathVariable String folio) {
         CustomResponse customResponse = new CustomResponse();
-        VentaModel venta = ventaService.getVentaByFolio(folio);
-        if (venta == null) {
-            customResponse.setHttpCode(HttpStatus.NOT_ACCEPTABLE);
-            customResponse.setMensaje("This acction can't execute, Not found Ventas with folio = " + folio);
-        } else {
-            ventaService.deleteVenta(venta.getId());
-            customResponse.setHttpCode(HttpStatus.ACCEPTED);
-            customResponse.setMensaje("Delete success");
-        }
+        ResponseEntity<Object> responseEntity = null;
+        try {
+            if (authorization == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse(HttpStatus.UNAUTHORIZED,
+                                "Please, send a JWT Headers like Authorization",
+                                401));
+            }
+            if (!auth.verifyToken(authorization)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        new CustomResponse("JWT invalid or expired", 401));
+            }
+            VentaModel venta = ventaService.getVentaByFolio(folio);
+            if (venta == null) {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new CustomResponse(HttpStatus.NO_CONTENT,
+                                "Not found Ventas with id = " + folio, 204));
+            } else {
+                ventaService.deleteVenta(venta.getId());
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new CustomResponse(HttpStatus.OK, "Delete success", 200));
+            }
 
-        return customResponse;
+        } catch (DataIntegrityViolationException e) {
+            customResponse.setMensaje("Error with ID");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
+        } catch (HttpClientErrorException e) {
+            customResponse.setMensaje("JWT invalid or expired");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
+        } catch (Exception e) {
+            customResponse.setMensaje(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(customResponse);
+        }
     }
 
     @PutMapping("/venta/folio/{folio}")
