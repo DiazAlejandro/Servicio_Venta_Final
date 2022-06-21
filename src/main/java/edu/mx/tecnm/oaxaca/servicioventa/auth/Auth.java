@@ -21,7 +21,7 @@ import java.util.Map;
 public class Auth {
     
     private final RestTemplate restTemplate;
-    private final String AUTH_ENDPOINT = "https://autenticacion-t.herokuapp.com/login/auth/token/";
+    private final String AUTH_ENDPOINT = "https://autenticacion-p.herokuapp.com/login/auth/token/";
 
     public Auth(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.build();
